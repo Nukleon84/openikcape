@@ -11,11 +11,11 @@ namespace Thermodynamics
 {
     namespace UOM
     {
-        double Unit::get_conversion_factor(Unit &other)
+        double Unit::get_conversion_factor(Unit other)
         {
             return this->factor / other.factor;
         }
-        double Unit::convert_value(double value, Unit &target)
+        double Unit::convert_value(double value, Unit target)
         {
             double baseValue = this->factor * value + this->offset;
             return (baseValue - target.offset) / target.factor;

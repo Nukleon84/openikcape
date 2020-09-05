@@ -20,8 +20,8 @@ namespace Thermodynamics
             double factor;
             double offset;
 
-             double get_conversion_factor(Unit& other);
-             double convert_value(double value, Unit& target);
+             double get_conversion_factor(Unit other);
+             double convert_value(double value, Unit target);
 
             Unit(std::wstring symbol, std::wstring name, std::array<double, 8> dimensions, double factor, double offset)
             { // Constructor
