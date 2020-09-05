@@ -15,10 +15,10 @@ namespace Thermodynamics
     {
         struct Quantity
         {
-            std::wstring name;
             std::wstring symbol;
-            double amount;
+            std::wstring name;            
             Thermodynamics::UOM::Unit unit;
+            double amount;            
 
             Quantity(std::wstring symbol, std::wstring name, double amount, Thermodynamics::UOM::Unit baseUnit):
             symbol(symbol) ,
@@ -28,6 +28,9 @@ namespace Thermodynamics
             {
             }
 
+            double convert_to(Thermodynamics::UOM::Unit otherUnit);
+            void assign_value(double value, Thermodynamics::UOM::Unit otherUnit);
+            
         };
 
     } // namespace Types

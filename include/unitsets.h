@@ -45,7 +45,28 @@ namespace Thermodynamics
 
         namespace METRIC
         {
-        }
+            using namespace UOM;
+            using namespace SI;
 
-    } // namespace UOM
+            Unit C = Unit(L"DEGC", L"Celsius", K, 1.0, 273.15);
+            Unit bar = Unit(L"bar", L"Bar (absolute)", Pa, 1e5, 0.0);
+            Unit mbar = Unit(L"mbar", L"MilliBar (absolute)", Pa, 1e2, 0.0);
+
+            Unit ton = Unit(L"ton", L"ton (metric)", kg, 1e3, 0.0);
+            Unit weightPercent = Unit(L"w-%", L"Weight Percent", kg / kg, 1e-2, 0.0);
+            Unit molPercent = Unit(L"mol-%", L"Mol Percent", mol / mol, 1e-2, 0.0);
+        } // namespace METRIC
+
+        namespace USENG
+        {
+            using namespace UOM;
+            using namespace SI;
+            Unit F = Unit(L"F", L"Fahrenheit", K, 1.0 / 1.8, 459.67 / 1.8);
+            Unit lb = Unit(L"lb", L"Pound", kg, 1.0/2.20462262,0.0 );
+            
+
+            Unit psi = Unit(L"psia", L"Pounds per square inch (absolute)", Pa, 0.0689476e5, 0.0);
+            Unit USGallon = Unit(L"US-Gal", L"US-Gallon", cum, 0.00378541, 0.0);
+        } // namespace USENG
+    }     // namespace UOM
 } // namespace Thermodynamics

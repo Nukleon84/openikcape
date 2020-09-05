@@ -15,14 +15,14 @@ namespace Thermodynamics
         {
             return this->factor / other.factor;
         }
+        
         double Unit::convert_value(double value, Unit target)
         {
             double baseValue = this->factor * value + this->offset;
             return (baseValue - target.offset) / target.factor;
         }
 
-        Unit Unit::operator*( // passing lhs by value helps optimize chained a+b+c
-            const Unit rhs)   // otherwise, both parameters may be const references
+        Unit Unit::operator*(const Unit rhs)
         {
             auto newDims = std::array<double, 8>();
 
@@ -33,8 +33,7 @@ namespace Thermodynamics
 
             return Unit(this->symbol + L"*" + rhs.symbol, L"Derived Unit", newDims, this->factor * rhs.factor, this->offset + rhs.offset);
         }
-        Unit Unit::operator/( // passing lhs by value helps optimize chained a+b+c
-            Unit rhs)         // otherwise, both parameters may be const references
+        Unit Unit::operator/(const Unit rhs)        
         {
             auto newDims = std::array<double, 8>();
 
@@ -45,8 +44,7 @@ namespace Thermodynamics
 
             return Unit(this->symbol + L"/" + rhs.symbol, L"Derived Unit", newDims, this->factor / rhs.factor, this->offset - rhs.offset);
         }
-        Unit Unit::operator^( // passing lhs by value helps optimize chained a+b+c
-            double rhs)       // otherwise, both parameters may be const references
+        Unit Unit::operator^(double rhs)       
         {
             auto newDims = std::array<double, 8>();
 
