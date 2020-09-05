@@ -164,22 +164,9 @@ namespace Thermodynamics
             //  yUnit:: uom.Unit
         };
 
-        struct Substance
-        {
-            std::wstring name;
-            std::wstring casNo;
-            std::wstring identifier;
-            std::wstring formula;
-            //std::vector<Variable> _constants = new List<Variable>();
-            std::map<PureProperties, PureFunction> functions;
-            bool isInert = false;
-        };
+     
 
-        struct ThermodynamicSystem
-        {
-            std::vector<Substance> substances;
-        };
-
+      
         
         extern std::map<PureCorrelations, string> CorrelationToName;
         extern std::map<string, PureCorrelations > NameToCorrelation;

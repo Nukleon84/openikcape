@@ -1,3 +1,5 @@
+#pragma once
+
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -18,8 +20,8 @@ namespace Thermodynamics
             double factor;
             double offset;
 
-            double get_conversion_factor(Unit other);
-            double convert_value(double value, Unit target);
+             double get_conversion_factor(Unit& other);
+             double convert_value(double value, Unit& target);
 
             Unit(std::wstring symbol, std::wstring name, std::array<double, 8> dimensions, double factor, double offset)
             { // Constructor
@@ -30,7 +32,7 @@ namespace Thermodynamics
                 this->offset = offset;
             }
 
-            Unit(std::wstring symbol, std::wstring name, Unit &baseUnit, double factor, double offset)
+            Unit(std::wstring symbol, std::wstring name, Unit baseUnit, double factor, double offset)
             { // Constructor
                 this->name = name;
                 this->symbol = symbol;
@@ -43,16 +45,18 @@ namespace Thermodynamics
             {
             }
 
-            Unit(std::wstring symbol, std::wstring name, Unit &baseUnit) : Unit(symbol, name, baseUnit, 1.0, 0.0)
+            Unit(std::wstring symbol, std::wstring name, Unit baseUnit) : Unit(symbol, name, baseUnit, 1.0, 0.0)
             {
             }
 
             Unit operator*(       // passing lhs by value helps optimize chained a+b+c
-                const Unit &rhs); // otherwise, both parameters may be const references
+                Unit rhs); // otherwise, both parameters may be const references
             Unit operator/(       // passing lhs by value helps optimize chained a+b+c
-                const Unit &rhs); // otherwise, both parameters may be const references
+                Unit rhs); // otherwise, both parameters may be const references
             Unit operator^(       // passing lhs by value helps optimize chained a+b+c
-                const double rhs); // otherwise, both parameters may be const references
+                double rhs); // otherwise, both parameters may be const references
+
+            operator std::wstring() const ;
         };
 
     } // namespace UOM
