@@ -16,14 +16,14 @@ namespace Thermodynamics
             Unit kg = Unit("kg", "Kilogram", {0, 1, 0, 0, 0, 0, 0, 0});
             Unit s = Unit("s", "Second", {0, 0, 1, 0, 0, 0, 0, 0});
             Unit K = Unit("K", "Kelvin", {0, 0, 0, 0, 1, 0, 0, 0});
-            Unit mol = Unit("mo", "mo", {0, 0, 0, 0, 0, 1, 0, 0});
-            Unit kmol = Unit("kmo", "Kilomo", mol, 1e3, 0.0);
+            Unit mol = Unit("mol", "mo", {0, 0, 0, 0, 0, 1, 0, 0});
+            Unit kmol = Unit("kmol", "Kilomol", mol, 1e3, 0.0);
 
             Unit N = Unit("N", "Newton", (kg * m) / (s ^ 2.0));
             Unit J = Unit("J", "Joule", (N * m));
 
-            Unit Pa = Unit("Pa", "Pasca", N / m ^ 2.0);
-            Unit kPa = Unit("kPa", "KiloPasca", Pa, 1e3, 0.0);
+            Unit Pa = Unit("Pa", "Pascal", N / m ^ 2.0);
+            Unit kPa = Unit("kPa", "KiloPascal", Pa, 1e3, 0.0);
 
             Unit W = Unit("W", "Watt", J / s);
 

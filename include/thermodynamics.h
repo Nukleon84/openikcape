@@ -207,7 +207,8 @@ namespace Thermodynamics
         class Database
         {
             std::string filename;
-            std::vector<string> componentList;
+            std::vector<string> component_names;
+            std::vector<Substance> known_components;
 
             void scan_database_file();
 

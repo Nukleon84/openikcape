@@ -10,32 +10,90 @@
 #include <iterator>
 
 #include "include/thermodynamics.h"
+#include "include/unitsets.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;
+
+using namespace Thermodynamics::UOM::SI;
+
 namespace Thermodynamics
 {
 
     void Database::scan_database_file()
     {
         ifstream infile;
-        infile.open("prop.dat");
+        infile.open(this->filename);
         if (infile.fail())
         { // oops the file did not exist for reading?
-            cout << "Input file opening failed." << endl;
+            cout << "Opening Property database file "<<  this->filename <<" failed." << endl;
             exit(1);
         }
 
         string line;
         while (getline(infile, line))
         { //read data from file object and put it into string.
-            if (line.rfind("SHOR", 0) == 0)
+            std::istringstream iss(line);
+            std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
+                                             std::istream_iterator<std::string>());
+
+            if (results[0] == "SYST")
             {
-                std::istringstream iss(line);
-                std::vector<std::string> results((std::istream_iterator<std::string>(iss)),
-                                                 std::istream_iterator<std::string>());
-                //cout << results[1]<<" "<< results[2] <<"\n";
-                this->componentList.push_back(results[2]);
+                auto maxComp = stoi(results[3]);
+                for (int i = 0; i < maxComp; i++)
+                {
+                    this->known_components.push_back(Substance());
+                }
+            }
+            if (results[0] == "SHOR")
+            {
+                auto index = stoi(results[1]) - 1;
+                this->known_components[index].identifier = results[2];
+                this->component_names.push_back(results[2]);
+            }
+            if (results[0] == "NAME")
+            {
+                auto index = stoi(results[1]) - 1;
+                this->known_components[index].name = results[2];
+            }
+            if (results[0] == "CASN")
+            {
+                auto index = stoi(results[1]) - 1;
+                this->known_components[index].casNo = results[2];
+            }
+
+            if (results[0] == "MOLW")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto value = stod(results[3]);
+                this->known_components[index].constants.insert(
+                    {MolecularProperties::MolarWeight,
+                     Quantity(results[0], results[0], value, kg / kmol)});
+            }
+
+            if (results[0] == "PC")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto value = stod(results[3]);
+                this->known_components[index].constants.insert(
+                    {MolecularProperties::CriticalPressure,
+                     Quantity(results[0], results[0], value, Pa)});
+            }
+            if (results[0] == "TC")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto value = stod(results[3]);
+                this->known_components[index].constants.insert(
+                    {MolecularProperties::CriticalTemperature,
+                     Quantity(results[0], results[0], value, K)});
+            }
+             if (results[0] == "AC")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto value = stod(results[3]);
+                this->known_components[index].constants.insert(
+                    {MolecularProperties::AcentricFactor,
+                     Quantity(results[0], results[0], value, none)});
             }
         }
         std::cout.flush();
@@ -45,7 +103,7 @@ namespace Thermodynamics
     Substance Database::find_component(std::string name)
     {
 
-        if (std::find(this->componentList.begin(), this->componentList.end(), name) == this->componentList.end())
+        if (std::find(this->component_names.begin(), this->component_names.end(), name) == this->component_names.end())
         {
             Substance comp;
             comp.name = "ERROR";
@@ -65,7 +123,7 @@ namespace Thermodynamics
 
     std::vector<string> Database::get_component_list()
     {
-        return this->componentList;
+        return this->component_names;
     }
 
 } // namespace Thermodynamics
