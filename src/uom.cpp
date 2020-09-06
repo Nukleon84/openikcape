@@ -31,7 +31,7 @@ namespace Thermodynamics
                 newDims[i] = this->dimensions[i] + rhs.dimensions[i];
             }
 
-            return Unit(this->symbol + L"*" + rhs.symbol, L"Derived Unit", newDims, this->factor * rhs.factor, this->offset + rhs.offset);
+            return Unit(this->symbol + "*" + rhs.symbol, "Derived Unit", newDims, this->factor * rhs.factor, this->offset + rhs.offset);
         }
         Unit Unit::operator/(const Unit rhs)        
         {
@@ -42,7 +42,7 @@ namespace Thermodynamics
                 newDims[i] = this->dimensions[i] - rhs.dimensions[i];
             }
 
-            return Unit(this->symbol + L"/" + rhs.symbol, L"Derived Unit", newDims, this->factor / rhs.factor, this->offset - rhs.offset);
+            return Unit(this->symbol + "/" + rhs.symbol, "Derived Unit", newDims, this->factor / rhs.factor, this->offset - rhs.offset);
         }
         Unit Unit::operator^(double rhs)       
         {
@@ -53,10 +53,10 @@ namespace Thermodynamics
                 newDims[i] = this->dimensions[i] * rhs;
             }
 
-            return Unit(this->symbol + L"^" + std::to_wstring(rhs), L"Derived Unit", newDims, this->factor, this->offset);
+            return Unit(this->symbol + "^" + std::to_string(rhs), "Derived Unit", newDims, this->factor, this->offset);
         }
 
-        Unit::operator std::wstring() const
+        Unit::operator std::string() const
         {
             return this->symbol;
         }

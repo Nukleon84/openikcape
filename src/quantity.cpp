@@ -4,7 +4,7 @@
 #include <math.h>
 #include <map>
 #include "include/uom.h"
-#include "include/quantity.h"
+#include "include/thermodynamics.h"
 using namespace std;
 
 namespace Thermodynamics

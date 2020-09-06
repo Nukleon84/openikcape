@@ -14,8 +14,8 @@ namespace Thermodynamics
         class Unit
         {
         public:
-            std::wstring symbol;
-            std::wstring name;
+            std::string symbol;
+            std::string name;
             std::array<double, 8> dimensions = {0, 0, 0, 0, 0, 0, 0, 0};
             double factor;
             double offset;
@@ -23,7 +23,7 @@ namespace Thermodynamics
              double get_conversion_factor(Unit other);
              double convert_value(double value, Unit target);
 
-            Unit(std::wstring symbol, std::wstring name, std::array<double, 8> dimensions, double factor, double offset)
+            Unit(std::string symbol, std::string name, std::array<double, 8> dimensions, double factor, double offset)
             { // Constructor
                 this->name = name;
                 this->symbol = symbol;
@@ -32,7 +32,7 @@ namespace Thermodynamics
                 this->offset = offset;
             }
 
-            Unit(std::wstring symbol, std::wstring name, Unit baseUnit, double factor, double offset)
+            Unit(std::string symbol, std::string name, Unit baseUnit, double factor, double offset)
             { // Constructor
                 this->name = name;
                 this->symbol = symbol;
@@ -41,11 +41,11 @@ namespace Thermodynamics
                 this->offset = offset;
             }
 
-            Unit(std::wstring symbol, std::wstring name, std::array<double, 8> dimensions) : Unit(symbol, name, dimensions, 1.0, 0.0)
+            Unit(std::string symbol, std::string name, std::array<double, 8> dimensions) : Unit(symbol, name, dimensions, 1.0, 0.0)
             {
             }
 
-            Unit(std::wstring symbol, std::wstring name, Unit baseUnit) : Unit(symbol, name, baseUnit, 1.0, 0.0)
+            Unit(std::string symbol, std::string name, Unit baseUnit) : Unit(symbol, name, baseUnit, 1.0, 0.0)
             {
             }
 
@@ -56,7 +56,7 @@ namespace Thermodynamics
             Unit operator^(       // passing lhs by value helps optimize chained a+b+c
                 double rhs); // otherwise, both parameters may be const references
 
-            operator std::wstring() const ;
+            operator std::string() const ;
         };
 
     } // namespace UOM

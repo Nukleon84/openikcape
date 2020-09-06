@@ -5,13 +5,16 @@
 #include <stdexcept>
 #include <math.h>
 #include <map>
+
+#include "include/uom.h"
 using namespace std;
 
 namespace Thermodynamics
 {
 
     namespace Types
-    {        
+    {
+        #pragma region Enums
         enum class PureCorrelations
         {
             None,
@@ -154,6 +157,8 @@ namespace Thermodynamics
             Supercritical
         };
 
+        #pragma endregion
+        
         struct PureFunction
         {
             PureProperties property;
@@ -164,15 +169,82 @@ namespace Thermodynamics
             //  yUnit:: uom.Unit
         };
 
-     
-
-      
-        
         extern std::map<PureCorrelations, string> CorrelationToName;
-        extern std::map<string, PureCorrelations > NameToCorrelation;
+        extern std::map<string, PureCorrelations> NameToCorrelation;
 
+        struct Quantity
+        {
+            std::string symbol;
+            std::string name;
+            Thermodynamics::UOM::Unit unit;
+            double amount;
+
+            Quantity(std::string symbol, std::string name, double amount, Thermodynamics::UOM::Unit baseUnit) : symbol(symbol),
+                                                                                                                  name(name),
+                                                                                                                  unit(baseUnit),
+                                                                                                                  amount(amount)
+            {
+            }
+
+            double convert_to(Thermodynamics::UOM::Unit otherUnit);
+            void assign_value(double value, Thermodynamics::UOM::Unit otherUnit);
+        };
+
+        struct Substance
+        {
+            std::string name;
+            std::string casNo;
+            std::string identifier;
+            std::string formula;
+            std::map<MolecularProperties, Quantity> constants;
+            std::map<PureProperties, PureFunction> functions;
+            bool isInert = false;
+        };
+
+        //Forward declaration to break cyclic dependency with Database class
+        class ThermodynamicSystem;
+
+        class Database
+        {
+            std::string filename;
+            std::vector<string> componentList;
+
+            void scan_database_file();
+
+        public:
+            Database(std::string file)
+            {
+                this->filename = file;
+                this->scan_database_file();
+            };
+
+            Thermodynamics::Types::Substance find_component(std::string name);
+            void fill_binary_parameters(Thermodynamics::Types::ThermodynamicSystem *system);
+            std::vector<string> get_component_list();
+        };
+
+        class ThermodynamicSystem
+        {
+            std::vector<Substance> substances;
+            std::string name;
+
+        public:
+            ThermodynamicSystem(std::string name, Thermodynamics::Types::Database &db, std::vector<string> componentList)
+            {
+                this->name = name;
+
+                for (auto name : componentList)
+                {
+                    auto comp = db.find_component(name);
+
+                    if (comp.identifier != "ERROR")
+                    {
+                        substances.push_back(comp);
+                    }
+                }
+                db.fill_binary_parameters(this);
+            };
+        };
 
     } // namespace Types
-
-
 } // namespace Thermodynamics

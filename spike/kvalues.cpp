@@ -11,6 +11,9 @@ using namespace std;
 
 int main()
 {
+    auto db= Thermodynamics::Types::Database("prop.dat");
+    auto sys =Thermodynamics::Types::ThermodynamicSystem("Test",db,{"Ethanol","Water"});
+
 
     auto f1 = Thermodynamics::Types::PureFunction();
     f1.correlation = Thermodynamics::Types::PureCorrelations::Antoine;
@@ -18,8 +21,8 @@ int main()
     f1.c = {2.31553586E+01, 3.46253549E+03, -5.36319937E+01};
 
     auto s1 = Thermodynamics::Types::Substance();
-    s1.name = L"Ethanol";
-    s1.formula = L"C2H5O";
+    s1.name = "Ethanol";
+    s1.formula = "C2H5O";
     s1.functions[Thermodynamics::Types::PureProperties::VaporPressure] = f1;
 
     auto f2 = Thermodynamics::Types::PureFunction();
@@ -28,8 +31,8 @@ int main()
     f2.c = {2.33275405E+01, 3.91170311E+03, -4.18495115E+01};
 
     auto s2 = Thermodynamics::Types::Substance();
-    s2.name = L"Water";
-    s2.formula = L"H2O";
+    s2.name = "Water";
+    s2.formula = "H2O";
     s2.functions[Thermodynamics::Types::PureProperties::VaporPressure] = f2;
 
     dual T, p = 1.013e5;

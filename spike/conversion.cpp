@@ -7,7 +7,6 @@
 #include "include/vleqfunctions.h"
 #include "include/uom.h"
 #include "include/unitsets.h"
-#include "include/quantity.h"
 
 using namespace autodiff;
 using namespace std;

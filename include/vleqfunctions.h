@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <math.h>
 #include "include/thermodynamics.h"
-#include "include/substance.h"
 using namespace std;
 
 namespace Thermodynamics
