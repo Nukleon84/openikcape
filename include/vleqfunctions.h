@@ -23,6 +23,9 @@ namespace Thermodynamics
             case Thermodynamics::Types::PureCorrelations::Antoine:
                 return PureFunctions::ANTO(temperature, f->second) / pressure;
                 break;
+                 case Thermodynamics::Types::PureCorrelations::ExtendedKirchhoff:
+                return PureFunctions::KIR1(temperature, f->second) / pressure;
+                break;
 
             default:
                 return 1e-10;

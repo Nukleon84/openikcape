@@ -1,5 +1,9 @@
 #include "lib/pybind11/pybind11.h"
 
+#include "lib/pybind11/stl.h"
+
+
+
 #include <iostream>
 #include <math.h>
 #include "lib/autodiff/forward.hpp"
@@ -10,39 +14,9 @@
 
 using namespace autodiff;
 using namespace std;
+using namespace Thermodynamics::Types;
 
-Thermodynamics::Types::Substance get_component(string component)
-{
-    auto f1 = Thermodynamics::Types::PureFunction();
-    f1.correlation = Thermodynamics::Types::PureCorrelations::Antoine;
-    f1.property = Thermodynamics::Types::PureProperties::VaporPressure;
-    f1.c = {2.31553586E+01, 3.46253549E+03, -5.36319937E+01};
-
-    auto s1 = Thermodynamics::Types::Substance();
-    s1.name = L"Ethanol";
-    s1.formula = L"C2H5O";
-    s1.functions[Thermodynamics::Types::PureProperties::VaporPressure] = f1;
-
-    auto f2 = Thermodynamics::Types::PureFunction();
-    f2.correlation = Thermodynamics::Types::PureCorrelations::Antoine;
-    f2.property = Thermodynamics::Types::PureProperties::VaporPressure;
-    f2.c = {2.33275405E+01, 3.91170311E+03, -4.18495115E+01};
-
-    auto s2 = Thermodynamics::Types::Substance();
-    s2.name = L"Water";
-    s2.formula = L"H2O";
-    s2.functions[Thermodynamics::Types::PureProperties::VaporPressure] = f2;
-
-    if (component == "Ethanol")
-        return s1;
-
-    if (component == "Water")
-        return s2;
-
-    return s2;
-}
-
-tuple<double, double> kvalue(Thermodynamics::Types::Substance component, double temp, double pres)
+tuple<double, double> kvalue(Substance component, double temp, double pres)
 {
     dual T, p, k;
     T = temp;
@@ -59,22 +33,52 @@ int add(int i, int j)
     return i + j * 2;
 }
 
+
+Database load_database(string file)
+{
+    return Database(file);
+}
+
+ThermodynamicSystem create_system(string name,Database &db, vector<string> componentlist )
+{
+    return ThermodynamicSystem(name,db,componentlist);
+}
+
+Calculator create_calculator(ThermodynamicSystem &system)
+{
+    return Calculator(system);
+}
+
+
+
+
+
 PYBIND11_MODULE(openikcape, m)
 {
     m.doc() = "pybind11 example plugin"; // optional module docstring
 
-    pybind11::class_<Thermodynamics::Types::Substance>(m, "Substance")
+    pybind11::class_<Substance>(m, "Substance")
         .def(pybind11::init<>())
-        .def_readwrite("name", &Thermodynamics::Types::Substance::name)
-        .def_readwrite("casno", &Thermodynamics::Types::Substance::casNo)
-        .def_readwrite("formula", &Thermodynamics::Types::Substance::formula);
+        .def_readwrite("name", &Substance::name)
+        .def_readwrite("casno", &Substance::casNo)
+        .def_readwrite("formula", &Substance::formula);
+    
+    pybind11::class_<Database>(m, "Database")   
+        .def(pybind11::init<std::string&>())     
+        .def("getComponentList", &Database::get_component_list);
+  
+    pybind11::class_<ThermodynamicSystem>(m, "ThermodynamicSystem")        
+        .def_readwrite("name", &ThermodynamicSystem::name)
+        .def("getComponentList", &ThermodynamicSystem::get_component_list);
+  
+    pybind11::class_<Calculator>(m, "Calculator")           
+        .def("getPureProperty", &Calculator::get_pure_property);
+  
 
-
-
+    m.def("loadDatabase", &load_database, "A function which creates a thermodynamic database");
+    m.def("createSystem", &create_system, "A function which creates a thermodynamic system");
+    m.def("createCalculator", &create_calculator, "A function which creates a calculator object");
 
     m.def("add", &add, "A function which adds two numbers");
-
     m.def("kvalue", &kvalue, "A function which calculates the vle partition coefficient");
-
-    m.def("get_component", &get_component, "A function which returns a substance for a given string");
 }

@@ -1,8 +1,10 @@
 #include <string>
 #include <vector>
+#include <map>
 #include <stdexcept>
 #include <math.h>
 #include <algorithm>
+#include <cctype>
 
 #include <fstream>
 #include <iostream>
@@ -26,7 +28,7 @@ namespace Thermodynamics
         infile.open(this->filename);
         if (infile.fail())
         { // oops the file did not exist for reading?
-            cout << "Opening Property database file "<<  this->filename <<" failed." << endl;
+            cout << "Opening Property database file " << this->filename << " failed." << endl;
             exit(1);
         }
 
@@ -87,7 +89,7 @@ namespace Thermodynamics
                     {MolecularProperties::CriticalTemperature,
                      Quantity(results[0], results[0], value, K)});
             }
-             if (results[0] == "AC")
+            if (results[0] == "AC")
             {
                 auto index = stoi(results[1]) - 1;
                 auto value = stod(results[3]);
@@ -95,25 +97,139 @@ namespace Thermodynamics
                     {MolecularProperties::AcentricFactor,
                      Quantity(results[0], results[0], value, none)});
             }
+
+            if (results[0] == "VP")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::VaporPressure;
+                this->known_components[index].functions.insert(
+                    {PureProperties::VaporPressure,
+                     function});
+            }
+
+            if (results[0] == "CPID")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::IdealGasHeatCapacity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::IdealGasHeatCapacity,
+                     function});
+            }
+            if (results[0] == "HVAP")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::HeatOfVaporization;
+                this->known_components[index].functions.insert(
+                    {PureProperties::HeatOfVaporization,
+                     function});
+            }
+            if (results[0] == "DENL")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::LiquidDensity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::LiquidDensity,
+                     function});
+            }
+            if (results[0] == "ST")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::SurfaceTension;
+                this->known_components[index].functions.insert(
+                    {PureProperties::SurfaceTension,
+                     function});
+            }
+            if (results[0] == "CL")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::LiquidHeatCapacity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::LiquidHeatCapacity,
+                     function});
+            }
+
+            if (results[0] == "KLIQ")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::LiquidHeatConductivity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::LiquidHeatConductivity,
+                     function});
+            }
+            if (results[0] == "KVAP")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::VaporHeatConductivity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::VaporHeatConductivity,
+                     function});
+            }
+            if (results[0] == "VISL")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::LiquidViscosity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::LiquidViscosity,
+                     function});
+            }
+            if (results[0] == "VISV")
+            {
+                auto index = stoi(results[1]) - 1;
+                auto function = this->parse_function(infile, results);
+                function.property = PureProperties::VaporViscosity;
+                this->known_components[index].functions.insert(
+                    {PureProperties::VaporViscosity,
+                     function});
+            }
         }
         std::cout.flush();
         infile.close();
     }
 
+    PureFunction Database::parse_function(ifstream &infile, vector<string> &results)
+    {
+        auto function = PureFunction();
+
+        function.tmin = stod(results[5]);
+        function.tmax = stod(results[6]);
+
+        string paramline;
+        getline(infile, paramline);
+        std::istringstream iss2(paramline);
+        std::vector<std::string> parameters((std::istream_iterator<std::string>(iss2)), std::istream_iterator<std::string>());
+
+        for (string i : parameters)
+            function.c.push_back(stod(i));
+
+        if (Thermodynamics::Types::NameToCorrelation.count(results[3]) > 0)
+            function.correlation = Thermodynamics::Types::NameToCorrelation[results[3]];
+        else
+            function.correlation = Thermodynamics::Types::PureCorrelations::None;
+
+        return function;
+    }
+
     Substance Database::find_component(std::string name)
     {
 
-        if (std::find(this->component_names.begin(), this->component_names.end(), name) == this->component_names.end())
+        for (auto comp : this->known_components)
         {
-            Substance comp;
-            comp.name = "ERROR";
-            comp.identifier = "ERROR";
-            return comp;
+            if (comp.identifier  == name || comp.name == name)
+                return comp;
         }
 
         Substance comp;
-        comp.name = name;
-        comp.identifier = name;
+        comp.name = "ERROR";
+        comp.identifier = "ERROR";
         return comp;
     }
 

@@ -22,6 +22,19 @@ namespace Thermodynamics
 
         };
 
+        std::map<string, PureProperties> NameToProperty = {
+            {"VP", PureProperties::VaporPressure},
+            {"CL", PureProperties::LiquidHeatCapacity},
+            {"CPID", PureProperties::IdealGasHeatCapacity},
+            {"HVAP", PureProperties::HeatOfVaporization},
+            {"DENL", PureProperties::LiquidDensity},
+            {"ST", PureProperties::SurfaceTension},
+            {"VISL", PureProperties::LiquidViscosity},
+            {"VISV", PureProperties::VaporViscosity},
+            {"KLIQ", PureProperties::LiquidHeatConductivity},
+            {"KVAP", PureProperties::VaporHeatConductivity},
+        };
+        
         std::map<string, PureCorrelations> NameToCorrelation = {
             {"POLY", PureCorrelations::Polynomial},
             {"ANTO", PureCorrelations::Antoine},

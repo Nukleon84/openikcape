@@ -14,7 +14,7 @@ namespace Thermodynamics
 
     namespace Types
     {
-        #pragma region Enums
+#pragma region Enums
         enum class PureCorrelations
         {
             None,
@@ -157,8 +157,8 @@ namespace Thermodynamics
             Supercritical
         };
 
-        #pragma endregion
-        
+#pragma endregion
+
         struct PureFunction
         {
             PureProperties property;
@@ -171,7 +171,7 @@ namespace Thermodynamics
 
         extern std::map<PureCorrelations, string> CorrelationToName;
         extern std::map<string, PureCorrelations> NameToCorrelation;
-
+        extern std::map<string, PureProperties> NameToProperty;
         struct Quantity
         {
             std::string symbol;
@@ -180,9 +180,9 @@ namespace Thermodynamics
             double amount;
 
             Quantity(std::string symbol, std::string name, double amount, Thermodynamics::UOM::Unit baseUnit) : symbol(symbol),
-                                                                                                                  name(name),
-                                                                                                                  unit(baseUnit),
-                                                                                                                  amount(amount)
+                                                                                                                name(name),
+                                                                                                                unit(baseUnit),
+                                                                                                                amount(amount)
             {
             }
 
@@ -211,6 +211,7 @@ namespace Thermodynamics
             std::vector<Substance> known_components;
 
             void scan_database_file();
+            PureFunction parse_function(ifstream &infile, vector<string> &results);
 
         public:
             Database(std::string file)
@@ -226,10 +227,11 @@ namespace Thermodynamics
 
         class ThermodynamicSystem
         {
-            std::vector<Substance> substances;
-            std::string name;
+            
+  
 
         public:
+            std::string name;
             ThermodynamicSystem(std::string name, Thermodynamics::Types::Database &db, std::vector<string> componentList)
             {
                 this->name = name;
@@ -245,6 +247,24 @@ namespace Thermodynamics
                 }
                 db.fill_binary_parameters(this);
             };
+            std::vector<Substance> substances;
+            std::vector<Substance> get_component_list()
+            {
+                return this->substances;
+            }
+        };
+
+        class Calculator
+        {
+            ThermodynamicSystem *system;
+
+        public:
+            Calculator(ThermodynamicSystem &system)
+            {
+                this->system = &system;
+            };
+
+            double get_pure_property(string property, int componentIndex, double temperature);
         };
 
     } // namespace Types

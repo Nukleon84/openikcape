@@ -8,11 +8,10 @@ import random
 res=ikc.add(1, 2)
 print(res)
 
-comp1= ikc.get_component("Water")
-for i in range(100):
-    T=random.uniform(273.0,373.0)
-    p=random.uniform(0.1,3.0)*1e5
-    k, dKdT= ikc.kvalue(comp1, T,p )
-    print(f"T={T} K     P={p} Pa  K = {k}   dKdT={dKdT}")
-
-print(f"{comp1.name} [CAS={comp1.casno}, Formula={comp1.formula}]")
+db= ikc.loadDatabase("bin/prop.dat")
+sys=ikc.createSystem("test",db,["Ethanol","Water"])
+calc=ikc.createCalculator(sys)
+for i in range(20):
+    T=273.15+10*i
+    plV=calc.getPureProperty("VP", 0, T)
+    print(f"T={T} PlV={plV}")
