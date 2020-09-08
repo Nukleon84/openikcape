@@ -170,7 +170,7 @@ namespace Thermodynamics
             auto Tr = temperature / f.c[0];
             auto h = f.c[2] + f.c[3] * Tr + f.c[4] * pow(Tr, 2.0) + f.c[5] * pow(Tr, 3.0);
 
-            return f.c[0] * pow(1 - Tr, h);
+            return f.c[1] * pow(1 - Tr, h);
         }
 
         template <typename T>

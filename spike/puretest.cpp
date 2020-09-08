@@ -23,8 +23,8 @@ int main()
     for (size_t i = 0; i < 12; i++)
     {
         T = 273.15 + i * 10;
-        double y0= calculator.get_pure_property("VP",0, T)        ;
-        double y1= calculator.get_pure_property("VP",1, T)        ;
+        double y0= calculator.get_pure_property("HVAP",0, T)        ;
+        double y1= calculator.get_pure_property("HVAP",1, T)        ;
         
         printf("%*.2f %*.3f %*.3f \n", colwidth, T, colwidth, y0, colwidth, y1);
     }
