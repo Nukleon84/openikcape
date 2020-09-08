@@ -56,7 +56,7 @@ if(len(comp)>0):
     for i in range(steps):
         Ti=Tmin+(Tmax-Tmin)*(i+1)/steps
         
-        T.append(Ti if xscale=='Normal' else 1/Ti)
+        T.append(Ti if xscale=='Normal' else 1/(Ti+273.15))
 
     for c in comp:
         index=complist.index(c)
