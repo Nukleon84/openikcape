@@ -6,7 +6,10 @@
 #include <math.h>
 #include <map>
 
+#include <lib/Eigen/Dense>
+
 #include "include/uom.h"
+#include "include/unitsets.h"
 using namespace std;
 
 namespace Thermodynamics
@@ -163,10 +166,10 @@ namespace Thermodynamics
         {
             PureProperties property;
             PureCorrelations correlation;
-            std::vector<double> c;
+            Eigen::VectorXd c;
             double tmin, tmax, refx;
-            //    xUnit:: uom.Unit
-            //  yUnit:: uom.Unit
+            UOM::Unit xUnit=UOM::SI::none;
+            UOM::Unit yUnit=UOM::SI::none;
         };
 
         extern std::map<PureCorrelations, string> CorrelationToName;
@@ -190,6 +193,28 @@ namespace Thermodynamics
             void assign_value(double value, Thermodynamics::UOM::Unit otherUnit);
         };
 
+        struct BinaryParameterSet
+        {
+            std::string name;
+
+            BinaryParameterSet(string name, int NC)
+            {
+                this->name = name;
+                this->NC = NC;
+                this->p.insert({"A", Eigen::MatrixXd(NC, NC)});
+                this->p.insert({"B", Eigen::MatrixXd(NC, NC)});
+                this->p.insert({"C", Eigen::MatrixXd(NC, NC)});
+                this->p.insert({"D", Eigen::MatrixXd(NC, NC)});
+                this->p.insert({"E", Eigen::MatrixXd(NC, NC)});
+                this->p.insert({"F", Eigen::MatrixXd(NC, NC)});
+            }
+            void set_value(std::string matrix, int i, int j, double value);
+            double get_value(std::string matrix, int i, int j);
+
+        private:
+            int NC;
+            std::map<std::string, Eigen::MatrixXd> p;
+        };
         struct Substance
         {
             std::string name;
@@ -198,6 +223,7 @@ namespace Thermodynamics
             std::string formula;
             std::map<MolecularProperties, Quantity> constants;
             std::map<PureProperties, PureFunction> functions;
+
             bool isInert = false;
         };
 
@@ -220,6 +246,8 @@ namespace Thermodynamics
                 this->scan_database_file();
             };
 
+            int NC;
+            std::map<string, BinaryParameterSet> binaryparameters;
             Thermodynamics::Types::Substance find_component(std::string name);
             void fill_binary_parameters(Thermodynamics::Types::ThermodynamicSystem *system);
             std::vector<string> get_component_list();
@@ -227,11 +255,11 @@ namespace Thermodynamics
 
         class ThermodynamicSystem
         {
-            
-  
 
         public:
             std::string name;
+            std::map<string, BinaryParameterSet> binaryparameters;
+
             ThermodynamicSystem(std::string name, Thermodynamics::Types::Database &db, std::vector<string> componentList)
             {
                 this->name = name;
@@ -245,8 +273,11 @@ namespace Thermodynamics
                         substances.push_back(comp);
                     }
                 }
+                this->NC = substances.size();
                 db.fill_binary_parameters(this);
             };
+
+            int NC;
             std::vector<Substance> substances;
             std::vector<Substance> get_component_list()
             {

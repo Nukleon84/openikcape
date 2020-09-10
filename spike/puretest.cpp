@@ -18,11 +18,14 @@ int main()
     double T, p = 1.013e5;
     int colwidth = 10;
 
+    cout << sys.binaryparameters.at("NRTL").get_value("B",0,1)<<"\n";
+
     printf("%*s %*s %*s \n", colwidth, "T", colwidth, "K_Ethanol", colwidth, "K_Water");
 
     for (size_t i = 0; i < 12; i++)
     {
         T = 273.15 + i * 10;
+
         double y0= calculator.get_pure_property("HVAP",0, T)        ;
         double y1= calculator.get_pure_property("HVAP",1, T)        ;
         

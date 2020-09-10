@@ -9,6 +9,20 @@ namespace Thermodynamics
 {
     namespace VLEQFunctions
     {
+
+        template <typename T>
+        std::vector<T> ActivityCoefficients(T temperature, T pressure, std::vector<T> &x, const Thermodynamics::Types::ThermodynamicSystem &sys)
+        {
+
+        }
+
+        template <typename T>
+        void ActivityCoefficientsInPlace(T temperature, T pressure, std::vector<T> &x,std::vector<T> &gamma, const Thermodynamics::Types::ThermodynamicSystem &sys)
+        {
+
+        }
+
+
         template <typename T>
         T KValue(T temperature, T pressure, const Thermodynamics::Types::Substance &s)
         {

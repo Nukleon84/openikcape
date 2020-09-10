@@ -14,6 +14,8 @@
 #include "include/thermodynamics.h"
 #include "include/unitsets.h"
 
+#include <lib/Eigen/Dense>
+
 using namespace std;
 using namespace Thermodynamics::Types;
 
@@ -42,6 +44,7 @@ namespace Thermodynamics
             if (results[0] == "SYST")
             {
                 auto maxComp = stoi(results[3]);
+                this->NC = maxComp;
                 for (int i = 0; i < maxComp; i++)
                 {
                     this->known_components.push_back(Substance());
@@ -190,6 +193,25 @@ namespace Thermodynamics
                     {PureProperties::VaporViscosity,
                      function});
             }
+            if (results[0] == "LVEQ")
+            {
+                if (results[2] == "NRTL")
+                {
+                    this->binaryparameters.insert({"NRTL", BinaryParameterSet("NRTL", this->NC)});
+                }
+            }
+
+            if (results[0] == "NRTL")
+            {
+                auto matrix = results[1];
+                auto i = stoi(results[2]) - 1;
+                auto j = stoi(results[3]) - 1;
+                auto kij = stod(results[4]);
+                auto kji = stod(results[5]);
+
+                this->binaryparameters.at("NRTL").set_value(matrix, i, j, kij);
+                this->binaryparameters.at("NRTL").set_value(matrix, j, i, kji);
+            }
         }
         std::cout.flush();
         infile.close();
@@ -207,9 +229,15 @@ namespace Thermodynamics
         std::istringstream iss2(paramline);
         std::vector<std::string> parameters((std::istream_iterator<std::string>(iss2)), std::istream_iterator<std::string>());
 
-        for (string i : parameters)
-            function.c.push_back(stod(i));
+        function.c = Eigen::VectorXd(parameters.size());
 
+        for (int i = 0; i < parameters.size(); i++)
+        {
+            /* code */
+            function.c(i) = stod(parameters[i]);
+        }
+
+        function.xUnit= SI::K;
         if (Thermodynamics::Types::NameToCorrelation.count(results[3]) > 0)
             function.correlation = Thermodynamics::Types::NameToCorrelation[results[3]];
         else
@@ -223,7 +251,7 @@ namespace Thermodynamics
 
         for (auto comp : this->known_components)
         {
-            if (comp.identifier  == name || comp.name == name)
+            if (comp.identifier == name || comp.name == name)
                 return comp;
         }
 
@@ -235,6 +263,35 @@ namespace Thermodynamics
 
     void Database::fill_binary_parameters(ThermodynamicSystem *system)
     {
+        auto nrtlsys = BinaryParameterSet("NRTL", system->NC);
+        auto nrtldb = this->binaryparameters.at("NRTL");
+        auto matrices = {"A", "B", "C", "D", "E", "F"};
+
+        for (int i = 0; i < system->NC; i++)
+        {
+            for (int j = 0; j < system->NC; j++)
+            {
+                if (i == j)
+                    continue;
+
+                auto name_i = system->substances[i].identifier;
+                auto name_j = system->substances[j].identifier;
+
+                auto idb = find(this->component_names.begin(), this->component_names.end(), name_i);
+                int ii = distance(this->component_names.begin(), idb);
+                auto jdb = find(this->component_names.begin(), this->component_names.end(), name_j);
+                int jj = distance(this->component_names.begin(), jdb);
+
+                for (auto matrix : matrices)
+                {
+                    auto aij = nrtldb.get_value(matrix, ii, jj);
+                    auto aji = nrtldb.get_value(matrix, jj, ii);
+                    nrtlsys.set_value(matrix, i, j, aij);
+                    nrtlsys.set_value(matrix, j, i, aji);
+                }
+            }
+            system->binaryparameters.insert({"NRTL", nrtlsys});
+        }
     }
 
     std::vector<string> Database::get_component_list()
