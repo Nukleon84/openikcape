@@ -13,6 +13,7 @@
 
 #include "include/thermodynamics.h"
 #include "include/purefunctions.h"
+#include "include/vleqfunctions.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;
@@ -22,6 +23,30 @@ namespace Thermodynamics
     namespace Types
     {
 
+        ActivityPropertiesExt Calculator::get_vleq_gamma(double temperature, double pressure, vector<double> x)
+        {
+            
+            auto args = ActivityArguments();
+            args.T = temperature;
+            args.P = pressure;
+            auto NC = this->system->NC;
+            args.x = VectorXReal(NC);
+            for (int i = 0; i < x.size(); i++)
+            {
+                args.x[i] = x[i];
+            }
+
+            auto props = Thermodynamics::VLEQFunctions::ActivityCoefficients(args, (this->system));
+
+            ActivityPropertiesExt results;
+            results.Gex=props.Gex.val;
+            results.gamma= std::vector<double>(NC);
+            for (int i = 0; i < x.size(); i++)
+            {
+                results.gamma[i]=props.gamma[i].val;
+            }
+            return results;
+        }
         double Calculator::get_pure_property(string property, int componentIndex, double temperature)
         {
             if (componentIndex >= 0 && componentIndex < this->system->substances.size())

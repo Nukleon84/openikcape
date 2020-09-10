@@ -10,6 +10,7 @@
 
 #include "include/uom.h"
 #include "include/unitsets.h"
+#include "include/activityProperties.h"
 using namespace std;
 
 namespace Thermodynamics
@@ -201,19 +202,20 @@ namespace Thermodynamics
             {
                 this->name = name;
                 this->NC = NC;
-                this->p.insert({"A", Eigen::MatrixXd(NC, NC)});
-                this->p.insert({"B", Eigen::MatrixXd(NC, NC)});
-                this->p.insert({"C", Eigen::MatrixXd(NC, NC)});
-                this->p.insert({"D", Eigen::MatrixXd(NC, NC)});
-                this->p.insert({"E", Eigen::MatrixXd(NC, NC)});
-                this->p.insert({"F", Eigen::MatrixXd(NC, NC)});
+                this->p.insert({"A", Eigen::MatrixXd::Zero(NC, NC)});
+                this->p.insert({"B", Eigen::MatrixXd::Zero(NC, NC)});
+                this->p.insert({"C", Eigen::MatrixXd::Zero(NC, NC)});
+                this->p.insert({"D", Eigen::MatrixXd::Zero(NC, NC)});
+                this->p.insert({"E", Eigen::MatrixXd::Zero(NC, NC)});
+                this->p.insert({"F", Eigen::MatrixXd::Zero(NC, NC)});
             }
             void set_value(std::string matrix, int i, int j, double value);
             double get_value(std::string matrix, int i, int j);
+            std::map<std::string, Eigen::MatrixXd> p;
 
         private:
             int NC;
-            std::map<std::string, Eigen::MatrixXd> p;
+            
         };
         struct Substance
         {
@@ -260,6 +262,11 @@ namespace Thermodynamics
             std::string name;
             std::map<string, BinaryParameterSet> binaryparameters;
 
+            EquilibriumApproach approach= EquilibriumApproach::GammaPhi;
+            ActivityMethod activityMethod = ActivityMethod::NRTL;
+            FugacityMethod fugacityMethod= FugacityMethod::Ideal;
+
+
             ThermodynamicSystem(std::string name, Thermodynamics::Types::Database &db, std::vector<string> componentList)
             {
                 this->name = name;
@@ -295,6 +302,7 @@ namespace Thermodynamics
                 this->system = &system;
             };
 
+            ActivityPropertiesExt get_vleq_gamma(double temperature, double pressure, vector<double> x);
             double get_pure_property(string property, int componentIndex, double temperature);
         };
 

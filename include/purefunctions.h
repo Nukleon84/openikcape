@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <vector>
 #include <stdexcept>
@@ -9,7 +10,6 @@ namespace Thermodynamics
 {
     namespace PureFunctions
     {
-
         template <typename T>
         T POLY(T temperature, const Thermodynamics::Types::PureFunction &f)
         {

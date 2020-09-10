@@ -63,6 +63,15 @@ PYBIND11_MODULE(openikcape, m)
         .def_readwrite("casno", &Substance::casNo)
         .def_readwrite("formula", &Substance::formula);
     
+     pybind11::class_<ActivityPropertiesExt>(m, "ActivityProperties")
+        .def(pybind11::init<>())
+        .def_readwrite("gamma", &ActivityPropertiesExt::gamma)
+        .def_readwrite("Gex", &ActivityPropertiesExt::Gex)
+        .def_readwrite("Hex", &ActivityPropertiesExt::Gex);
+ 
+
+
+
     pybind11::class_<Database>(m, "Database")   
         .def(pybind11::init<std::string&>())     
         .def("getComponentList", &Database::get_component_list);
@@ -72,7 +81,8 @@ PYBIND11_MODULE(openikcape, m)
         .def("getComponentList", &ThermodynamicSystem::get_component_list);
   
     pybind11::class_<Calculator>(m, "Calculator")           
-        .def("getPureProperty", &Calculator::get_pure_property);
+        .def("getPureProperty", &Calculator::get_pure_property)
+        .def("getActivityCoefficients", &Calculator::get_vleq_gamma);
   
 
     m.def("loadDatabase", &load_database, "A function which creates a thermodynamic database");
