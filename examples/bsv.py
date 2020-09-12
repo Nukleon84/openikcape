@@ -17,7 +17,7 @@ comp1=st.sidebar.selectbox("Select the first substance", complist, index=0)
 comp2=st.sidebar.selectbox("Select the second substance", complist, index=2)
 T =st.sidebar.slider('Temperature Range [°C]', 0, 400, 100)
 
-steps =st.sidebar.slider('Number of Steps', 0, 50,20)
+steps =st.sidebar.slider('Number of Steps', 2, 30,20)
 
 sys=ikc.createSystem("test",db,[comp1,comp2])
 calc=ikc.createCalculator(sys)
@@ -67,7 +67,7 @@ data2=numpy.array([gex])
 df2= pd.DataFrame(data2.T, index=pd.Index(x,name="x"), columns=["Gex"])
 source2 = df2.reset_index().melt('x', var_name='component', value_name='y')
 #st.write(source2)
-line_chart2 = alt.Chart(source2).mark_line().encode(
+line_chart2 = alt.Chart(source2).mark_line(interpolate='basis').encode(
     alt.X('x', title='x1 [mol/mol]'),
     alt.Y('y', title="Gex/(RT) [-]")
     

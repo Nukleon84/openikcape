@@ -25,13 +25,13 @@ namespace Thermodynamics
 
         ActivityPropertiesExt Calculator::get_vleq_gamma(double temperature, double pressure, vector<double> x)
         {
-            
+
             auto args = ActivityArguments();
             args.T = temperature;
             args.P = pressure;
             auto NC = this->system->NC;
             args.x = VectorXReal(NC);
-            for (int i = 0; i < x.size(); i++)
+            for (size_t i = 0; i < x.size(); i++)
             {
                 args.x[i] = x[i];
             }
@@ -39,65 +39,26 @@ namespace Thermodynamics
             auto props = Thermodynamics::VLEQFunctions::ActivityCoefficients(args, (this->system));
 
             ActivityPropertiesExt results;
-            results.Gex=props.Gex.val;
-            results.gamma= std::vector<double>(NC);
-            for (int i = 0; i < x.size(); i++)
+            results.Gex = props.Gex.val;
+            results.gamma = std::vector<double>(NC);
+            results.lngamma = std::vector<double>(NC);
+            for (size_t i = 0; i < x.size(); i++)
             {
-                results.gamma[i]=props.gamma[i].val;
+                results.gamma[i] = props.gamma[i].val;
+                results.lngamma[i] = props.lngamma[i].val;
             }
             return results;
         }
         double Calculator::get_pure_property(string property, int componentIndex, double temperature)
         {
-            if (componentIndex >= 0 && componentIndex < this->system->substances.size())
+            if (componentIndex >= 0 && componentIndex < (int)(system->substances.size()))
             {
                 if (Thermodynamics::Types::NameToProperty.count(property) == 0)
                     return -1;
-
-                auto f = this->system->substances[componentIndex].functions[Thermodynamics::Types::NameToProperty[property]];
-
-                switch (f.correlation)
-                {
-                case Thermodynamics::Types::PureCorrelations::Antoine:
-                    return PureFunctions::ANTO(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::ExtendedKirchhoff:
-                    return PureFunctions::KIR1(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Polynomial:
-                    return PureFunctions::POLY(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Kirchhoff:
-                    return PureFunctions::KIRC(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::ExtendedAntoine:
-                    return PureFunctions::ANT1(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Wagner:
-                    return PureFunctions::WAGN(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Watson:
-                    return PureFunctions::WATS(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Rackett:
-                    return PureFunctions::RACK(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Sutherland:
-                    return PureFunctions::SUTH(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::AlyLee:
-                    return PureFunctions::ALYL(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Dippr102:
-                    return PureFunctions::DIP5(temperature, f);
-                    break;
-                case Thermodynamics::Types::PureCorrelations::Dippr106:
-                    return PureFunctions::DIP4(temperature, f);
-                    break;
-                default:
-                    return 1e-10;
-                    break;
-                }
+                
+                auto prop= Thermodynamics::Types::NameToProperty[property];
+                
+                return PureFunctions::get_pure_property(prop, componentIndex, temperature, this->system);
             }
             return 0.0;
         }

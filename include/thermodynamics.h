@@ -18,7 +18,7 @@ namespace Thermodynamics
 
     namespace Types
     {
-#pragma region Enums
+
         enum class PureCorrelations
         {
             None,
@@ -160,8 +160,6 @@ namespace Thermodynamics
             Vapor,
             Supercritical
         };
-
-#pragma endregion
 
         struct PureFunction
         {

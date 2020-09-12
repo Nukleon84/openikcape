@@ -18,6 +18,9 @@ namespace Thermodynamics
         ActivityProperties calculateNRTL(ActivityArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
         ActivityProperties ActivityCoefficients(ActivityArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
         
+        VectorXReal KValues(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        EquilibriumProperties CalculateFlashTP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+     
 
         template <typename T>
         T KValue(T temperature, T pressure, const Thermodynamics::Types::Substance &s)

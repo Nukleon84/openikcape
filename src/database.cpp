@@ -231,7 +231,7 @@ namespace Thermodynamics
 
         function.c = Eigen::VectorXd(parameters.size());
 
-        for (int i = 0; i < parameters.size(); i++)
+        for (size_t i = 0; i < parameters.size(); i++)
         {
             /* code */
             function.c(i) = stod(parameters[i]);

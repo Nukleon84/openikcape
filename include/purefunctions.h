@@ -16,11 +16,11 @@ namespace Thermodynamics
             if (f.c.size() < 1)
                 throw runtime_error("Too few parameters for Polynom equation");
 
-            auto retval = f.c[0];
+            T retval = f.c[0];
 
             for (int i = 1; i < f.c.size(); i++)
             {
-                retval += f.c[i] * pow(temperature, i);
+                retval =  retval + f.c[i] * pow(temperature, i);
             }
 
             return retval;
@@ -32,7 +32,7 @@ namespace Thermodynamics
             if (f.c.size() < 1)
                 throw runtime_error("Too few parameters for Polynom equation");
 
-            auto retval = f.c[0];
+            T retval = f.c[0];
 
             for (int i = 1; i < f.c.size(); i++)
             {
@@ -180,6 +180,57 @@ namespace Thermodynamics
                 throw runtime_error("Too few parameters for DIP5 equation");
 
             return f.c[0] * pow(temperature, f.c[1]) / (1 + f.c[2] / temperature + f.c[3] / pow(temperature, 2.0));
+        }
+
+        template <typename T>
+        T get_pure_property(Thermodynamics::Types::PureProperties property, int componentIndex, T temperature, const Thermodynamics::Types::ThermodynamicSystem *system)
+        {
+            //auto prop= Thermodynamics::Types::NameToProperty[property];
+
+            auto f = system->substances[componentIndex].functions.at(property);
+
+            switch (f.correlation)
+            {
+            case Thermodynamics::Types::PureCorrelations::Antoine:
+                return PureFunctions::ANTO(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::ExtendedKirchhoff:
+                return PureFunctions::KIR1(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Polynomial:
+                return PureFunctions::POLY(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Kirchhoff:
+                return PureFunctions::KIRC(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::ExtendedAntoine:
+                return PureFunctions::ANT1(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Wagner:
+                return PureFunctions::WAGN(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Watson:
+                return PureFunctions::WATS(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Rackett:
+                return PureFunctions::RACK(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Sutherland:
+                return PureFunctions::SUTH(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::AlyLee:
+                return PureFunctions::ALYL(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Dippr102:
+                return PureFunctions::DIP5(temperature, f);
+                break;
+            case Thermodynamics::Types::PureCorrelations::Dippr106:
+                return PureFunctions::DIP4(temperature, f);
+                break;
+            default:
+                return 1e-10;
+                break;
+            }
         }
 
     } // namespace PureFunctions

@@ -33,6 +33,7 @@ namespace Thermodynamics
 
             ActivityProperties result;
             result.gamma= VectorXReal(NC);
+            result.lngamma= VectorXReal(NC);
          
 
             auto tau = MatrixXReal(NC, NC);
@@ -63,7 +64,7 @@ namespace Thermodynamics
             for (int i = 0; i < NC; i++)
             {
                 Real S1 = 0.0;
-                for (size_t j = 0; j < NC; j++)
+                for (int j = 0; j < NC; j++)
                 {
                     S1 += tau(j, i) * G(j, i) * x[j];
                 }
@@ -79,16 +80,17 @@ namespace Thermodynamics
                 }
 
     	    	
-                result.gamma[i] = exp(S1 / S2[i] + S3);
+                result.lngamma[i] = S1 / S2[i] + S3;
+                result.gamma[i] = exp(result.lngamma[i]);
             }
 
-            Real S6=0.0;
+          /*  Real S6=0.0;
              for (int i = 0; i < NC; i++)
             {
-                S6+= args.x[i]*log(result.gamma[i]);
-            }
-
-            result.Gex = 8.31433*T*S6;
+                S6+= args.x[i]*result.lngamma[i];
+            }*/
+            auto sumxlng=args.x.dot(result.lngamma);
+            result.Gex = 8.31433*T*(sumxlng.val);
             result.Hex = 0.0;
 
             return result;
