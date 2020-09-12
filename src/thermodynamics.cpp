@@ -53,5 +53,17 @@ namespace Thermodynamics
             {"KIR1", PureCorrelations::ExtendedKirchhoff},
             {"SUTH", PureCorrelations::Sutherland},
         };
+
+    std::map<PhaseState, string> PhaseToString={
+        {PhaseState::None, "None"},
+        {PhaseState::Liquid, "Liquid"},
+        {PhaseState::Vapor, "Vapor"},
+        {PhaseState::LiquidVapor, "LiquidVapor"},
+        {PhaseState::BubblePoint, "BubblePoint"},
+        {PhaseState::DewPoint, "DewPoint"},
+        {PhaseState::Supercritical, "Supercritical"},
+        {PhaseState::Solid, "Solid"},
+    };
+
     } // namespace Types
 } // namespace Thermodynamics

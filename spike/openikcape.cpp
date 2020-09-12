@@ -69,7 +69,14 @@ PYBIND11_MODULE(openikcape, m)
         .def_readwrite("Gex", &ActivityPropertiesExt::Gex)
         .def_readwrite("Hex", &ActivityPropertiesExt::Gex);
  
-
+     pybind11::class_<EquilibriumPropertiesExt>(m, "EquilibriumProperties")
+        .def(pybind11::init<>())
+        .def_readwrite("T", &EquilibriumPropertiesExt::T)
+        .def_readwrite("P", &EquilibriumPropertiesExt::P)
+        .def_readwrite("v", &EquilibriumPropertiesExt::v)
+        .def_readwrite("x", &EquilibriumPropertiesExt::x)
+        .def_readwrite("y", &EquilibriumPropertiesExt::y)
+        .def_readwrite("z", &EquilibriumPropertiesExt::z);
 
 
     pybind11::class_<Database>(m, "Database")   
@@ -82,7 +89,9 @@ PYBIND11_MODULE(openikcape, m)
   
     pybind11::class_<Calculator>(m, "Calculator")           
         .def("getPureProperty", &Calculator::get_pure_property)
-        .def("getActivityCoefficients", &Calculator::get_vleq_gamma);
+        .def("getActivityCoefficients", &Calculator::get_vleq_gamma)
+        .def("calcFlashTP", &Calculator::calc_flash_tp)
+        .def("calcFlashZP", &Calculator::calc_flash_zp);
   
 
     m.def("loadDatabase", &load_database, "A function which creates a thermodynamic database");

@@ -149,7 +149,7 @@ namespace Thermodynamics
             Vapor
         };
 
-        enum class PhaseState
+         enum class PhaseState
         {
             None,
             Solid,
@@ -160,6 +160,7 @@ namespace Thermodynamics
             Vapor,
             Supercritical
         };
+
 
         struct PureFunction
         {
@@ -174,6 +175,9 @@ namespace Thermodynamics
         extern std::map<PureCorrelations, string> CorrelationToName;
         extern std::map<string, PureCorrelations> NameToCorrelation;
         extern std::map<string, PureProperties> NameToProperty;
+        extern std::map<PhaseState, string> PhaseToString;
+
+
         struct Quantity
         {
             std::string symbol;
@@ -299,6 +303,9 @@ namespace Thermodynamics
             {
                 this->system = &system;
             };
+
+            EquilibriumPropertiesExt calc_flash_tp(double temperature, double pressure, vector<double> z);      
+            EquilibriumPropertiesExt calc_flash_zp(double vaporfraction, double pressure, vector<double> z);      
 
             ActivityPropertiesExt get_vleq_gamma(double temperature, double pressure, vector<double> x);
             double get_pure_property(string property, int componentIndex, double temperature);

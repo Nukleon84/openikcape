@@ -15,12 +15,16 @@ namespace Thermodynamics
     namespace VLEQFunctions
     {
 
-        ActivityProperties calculateNRTL(ActivityArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
-        ActivityProperties ActivityCoefficients(ActivityArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
-        
-        VectorXReal KValues(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
-        EquilibriumProperties CalculateFlashTP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        ActivityProperties calculateNRTL(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        ActivityProperties ActivityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        FugacityProperties FugacityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
      
+        VectorXReal KValues(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+     
+        EquilibriumProperties calculate_flash_TP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        EquilibriumProperties calculate_flash_ZP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        VectorXReal WilsonKFactors(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+  
 
         template <typename T>
         T KValue(T temperature, T pressure, const Thermodynamics::Types::Substance &s)

@@ -11,7 +11,7 @@
 #include <autodiff/forward/eigen.hpp>
 
 #include "include/uom.h"
-#include "include/unitsets.h"
+#include "include/thermodynamics.h"
 
 using namespace std;
 
@@ -20,6 +20,9 @@ namespace Thermodynamics
 
     namespace Types
     {
+     
+      
+
         template <typename Scalar, typename Array>
         struct ActivityPropertiesBase
         {
@@ -60,9 +63,11 @@ namespace Thermodynamics
             Scalar T;
             Scalar P;
             Scalar v;
+            Array z;
             Array x;
             Array y;
             Array KValues;
+            string phase;
         };
 
         template <typename Scalar, typename Array>
@@ -71,6 +76,7 @@ namespace Thermodynamics
             Scalar T;
             Scalar P;
             Scalar v;
+            Array z;
             Array x;
             Array y;
         };

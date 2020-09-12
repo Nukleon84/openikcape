@@ -13,24 +13,51 @@ namespace Thermodynamics
 {
     namespace VLEQFunctions
     {
-        ActivityProperties ActivityCoefficients(ActivityArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        ActivityProperties ActivityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
         {
-            switch (sys->approach)
-            {
-            case EquilibriumApproach::GammaPhi:
-                switch (sys->activityMethod)
-                {
-                case ActivityMethod::NRTL:
-                    return calculateNRTL(args, sys);
-                    break;
 
-                default:
-                    break;
-                }
+            switch (sys->activityMethod)
+            {
+            case ActivityMethod::NRTL:
+                return calculateNRTL(args, sys);
+                break;
+
             default:
                 break;
             }
+
             return ActivityProperties();
+        }
+
+        FugacityProperties FugacityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        {
+            switch (sys->fugacityMethod)
+            {
+
+            default:
+                FugacityProperties vprops;
+                //Assume ideal gas phase for every system
+                vprops.phi = VectorXReal::Ones(sys->NC);
+                vprops.lnphi = VectorXReal::Zero(sys->NC);
+                vprops.Gex = 0;
+                vprops.Hex = 0;
+                return vprops;
+                break;
+            }
+            return FugacityProperties();
+        }
+
+        VectorXReal WilsonKFactors(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        {
+            VectorXReal result = VectorXReal::Zero(sys->NC);
+            for (int i = 0; i < sys->NC; i++)
+            {
+                double Pci = sys->substances[i].constants.at(MolecularProperties::CriticalPressure).amount;
+                double wi= sys->substances[i].constants.at(MolecularProperties::AcentricFactor).amount;
+                double Tci= sys->substances[i].constants.at(MolecularProperties::CriticalTemperature).amount;
+                result[i] = exp(log(Pci / args.P) + 5.373 * (1 + wi) * (1 - Tci / args.T));
+            }
+            return result;
         }
 
         VectorXReal KValues(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
@@ -39,45 +66,25 @@ namespace Thermodynamics
 
             ActivityProperties lprops;
             FugacityProperties vprops;
-            ActivityArguments act_args;
+            /*ActivityArguments act_args;
             act_args.T = args.T;
             act_args.P = args.P;
             act_args.x = args.x;
 
-            switch (sys->approach)
+            FugacityArguments fug_args;
+            fug_args.T = args.T;
+            fug_args.P = args.P;
+            fug_args.y = args.y;*/
+
+            if (sys->approach == EquilibriumApproach::GammaPhi)
             {
-            case EquilibriumApproach::GammaPhi:
-            {
-
-                switch (sys->activityMethod)
-                {
-                case ActivityMethod::NRTL:
-                    lprops = calculateNRTL(act_args, sys);
-                    break;
-                default:
-                    break;
-                }
-
-                switch (sys->fugacityMethod)
-                {
-
-                default:
-                    //Assume ideal gas phase for every system
-                    vprops.phi = VectorXReal::Ones(sys->NC);
-                    vprops.lnphi = VectorXReal::Zero(sys->NC);
-                    vprops.Gex = 0;
-                    vprops.Hex = 0;
-                    break;
-                }
-
+                lprops = ActivityCoefficients(args, sys);
+                vprops = FugacityCoefficients(args, sys);
                 for (int i = 0; i < sys->NC; i++)
                 {
                     auto vp = PureFunctions::get_pure_property(PureProperties::VaporPressure, i, args.T, sys);
-                    result[i] = lprops.gamma[i] * args.x[i] * vp / (vprops.phi[i] * args.P);
+                    result[i] = lprops.gamma[i] * vp / (vprops.phi[i] * args.P);
                 }
-            }
-            default:
-                break;
             }
 
             return result;

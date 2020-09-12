@@ -15,7 +15,7 @@ namespace Thermodynamics
     namespace VLEQFunctions
     {
 
-        ActivityProperties calculateNRTL(ActivityArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        ActivityProperties calculateNRTL(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
         {
              
             auto matrices = sys->binaryparameters.at("NRTL").p;
@@ -26,9 +26,9 @@ namespace Thermodynamics
             auto e = matrices.at("E");
             auto f = matrices.at("F");
 
-            auto T = args.T;
-            auto P = args.P;
-            auto x = args.x;
+            /*auto T = &args.T;
+            auto P = &args.P;
+            auto x = &args.x;*/
             auto NC = sys->NC;
 
             ActivityProperties result;
@@ -45,8 +45,8 @@ namespace Thermodynamics
                 for (int j = 0; j < NC; j++)
                 {
 
-                    tau(i, j) = a(i, j) + b(i, j) / T + e(i, j) * log(T) + f(i, j) * T;
-                    auto sij=c(i, j) + d(i, j) * (T - 273.15);
+                    tau(i, j) = a(i, j) + b(i, j) / args.T + e(i, j) * log(args.T) + f(i, j) * args.T;
+                    auto sij=c(i, j) + d(i, j) * (args.T - 273.15);
                     G(i, j) = exp(- sij * tau(i, j)) ;
                 }
             }
@@ -57,7 +57,7 @@ namespace Thermodynamics
                 S2[i] = 0.0;
                 for (int k = 0; k < NC; k++)
                 {
-                    S2[i] +=  G(k, i)* x[k] ;
+                    S2[i] +=  G(k, i)* args.x[k] ;
                 }
             }
 
@@ -66,7 +66,7 @@ namespace Thermodynamics
                 Real S1 = 0.0;
                 for (int j = 0; j < NC; j++)
                 {
-                    S1 += tau(j, i) * G(j, i) * x[j];
+                    S1 += tau(j, i) * G(j, i) * args.x[j];
                 }
                 Real S3 = 0.0;
 
@@ -74,9 +74,9 @@ namespace Thermodynamics
                 {
                     Real S5 = 0.0;
                     for (int m = 0; m < NC; m++)
-                        S5 += x[m] * tau(m, j) * G(m, j);
+                        S5 += args.x[m] * tau(m, j) * G(m, j);
 
-                    S3 += x[j] * G(i, j) / S2[j] * (tau(i, j) - S5 / (S2[j]));
+                    S3 += args.x[j] * G(i, j) / S2[j] * (tau(i, j) - S5 / (S2[j]));
                 }
 
     	    	
@@ -84,63 +84,12 @@ namespace Thermodynamics
                 result.gamma[i] = exp(result.lngamma[i]);
             }
 
-          /*  Real S6=0.0;
-             for (int i = 0; i < NC; i++)
-            {
-                S6+= args.x[i]*result.lngamma[i];
-            }*/
             auto sumxlng=args.x.dot(result.lngamma);
-            result.Gex = 8.31433*T*(sumxlng.val);
+            result.Gex = 8.31433*args.T*(sumxlng.val);
             result.Hex = 0.0;
 
             return result;
         }
     } // namespace VLEQFunctions
 } // namespace Thermodynamics
-  /*
-            Expression lnGamma = 0.0;
-            Expression S1 = 0.0;
-            Expression[] S2 = new Expression[NC];
-            Expression S3 = 0.0;
-            for (int j = 0; j < NC; j++)
-            {
-                if (a[j, i] == 0.0 && b[j, i] == 0.0)
-                    continue;
-                if (c[j, i] == 0.0 && d[j, i] == 0.0)
-                    continue;
-
-                S1 += x[j] * tau[j, i] * G[j, i];
-            }
-
-            for (int ii = 0; ii < NC; ii++)
-            {
-                S2[ii] = 0.0;
-                for (int k = 0; k < NC; k++)
-                {
-                    S2[ii] += x[k] * G[k, ii];
-                }
-            }
-            for (int j = 0; j < NC; j++)
-            {
-                Expression S5 = 0.0;
-
-                for (int m = 0; m < NC; m++)
-                {
-                    if (a[m, j] == 0.0 && b[m, j] == 0.0)
-                        continue;
-
-
-                    S5 += x[m] * tau[m, j] * G[m, j];
-                }
-
-                S3 += x[j] * G[i, j] / Sym.Par(S2[j]) * (tau[i, j] - S5 / Sym.Par(S2[j]));
-            }
-
-            lnGamma = S1 / S2[i] + S3;
-            _gammaExp = Sym.Exp(lnGamma);
-
-            ValueFunc = () => _gammaExp.Val();
-            DiffFunc = (vari) => _gammaExp.Diff(vari);
-
-            this.AddChildren(_gammaExp);
-*/
+  
