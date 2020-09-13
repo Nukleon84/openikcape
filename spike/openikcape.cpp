@@ -91,7 +91,8 @@ PYBIND11_MODULE(openikcape, m)
         .def("getPureProperty", &Calculator::get_pure_property)
         .def("getActivityCoefficients", &Calculator::get_vleq_gamma)
         .def("calcFlashTP", &Calculator::calc_flash_tp)
-        .def("calcFlashZP", &Calculator::calc_flash_zp);
+        .def("calcFlashZP", &Calculator::calc_flash_zp)
+        .def("calcFlashZT", &Calculator::calc_flash_zt);
   
 
     m.def("loadDatabase", &load_database, "A function which creates a thermodynamic database");

@@ -35,6 +35,14 @@ int main()
     cout << "Vapor Fraction :" << result2.v << endl;
     cout << "Temperature:" << result2.T << endl;
 
+    result2 = calculator.calc_flash_zt(0.0,T, {0.5, 0.5});
+
+    cout << "Phase State    :" << result2.phase << endl;
+    cout << "Vapor Fraction :" << result2.v << endl;
+    cout << "Temperature:" << result2.T << endl;
+    cout << "Pressure:" << result2.P << endl;
+
+
 
 
 }

@@ -58,6 +58,37 @@ if(mode=="IsobaricVLE"):
     )
     st.altair_chart(line_chart)
 
+if(mode=="IsothermalVLE"):
+    st.title("Isothermal VLE")
+    tb=[]
+    td=[]
+    x=[]
+    for i in range(steps):
+        xi=(i)/(steps-1)    
+        x.append(xi)
+    for i in range(steps):       
+        xi=(i)/(steps-1)    
+        props=calc.calcFlashZT(0.0,T+273.15,[xi,1-xi])
+        tb.append(props.P/1e2)       
+        props=calc.calcFlashZT(1.0,T+273.15,[xi,1-xi])
+        td.append(props.P/1e2)       
+    
+    data=numpy.array([tb,td])
+    df= pd.DataFrame(data.T, index=pd.Index(x,name="x"), columns=["Bubble Point", "Dew Point"])
+    source = df.reset_index().melt('x', var_name='curve', value_name='y')
+    line_chart = alt.Chart(source).mark_line(interpolate='basis').encode(   
+        alt.X('x', title='x1 [mol/mol]'),
+        alt.Y('y', title="Pressure [mbar]"),    
+        color='curve:N'
+    ).properties(
+        title=f'Isothermal Phase Envelope (at {T} °C)',
+        width=400,
+        height=400
+    ).configure_legend(
+    orient='bottom'
+    )
+    st.altair_chart(line_chart)
+
 
 if(mode=="Gamma&Gex"):
     st.title("Activity Coefficients")

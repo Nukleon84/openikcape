@@ -62,7 +62,7 @@ namespace Thermodynamics
                 prevX = x;
             }
             //std::cout << "Iter: " << i << " X: " << x << " f(x): " << f(x, z, K) << endl;
-            std::cout << "VF= " << x << endl;
+           // std::cout << "VF= " << x << endl;
             return x;
         }
 
@@ -83,8 +83,30 @@ namespace Thermodynamics
                 prevX = args.T;
             }
             //std::cout << "Iter: " << i << " X: " << x << " f(x): " << f(x, z, K) << endl;
-            std::cout << "T= " << args.T << endl;
+            //std::cout << "T= " << args.T << endl;
             return args.T;
+        }
+
+
+           Real solveBubblePointForP(Real f(EquilibriumArguments &, const Thermodynamics::Types::ThermodynamicSystem *), EquilibriumArguments &args, const Thermodynamics::Types::ThermodynamicSystem *sys, double tol, int maxiter)
+        {
+            Real prevX = args.P;
+
+            Real fval = 0.0;
+            for (int i = 0; i < maxiter; i++)
+            {
+                fval = f(args, sys);
+
+                if (abs(fval) < tol)
+                    break;
+
+                double dfdx = derivative(f, wrt(args.P), at(args, sys));
+                args.P = prevX - (fval / dfdx);
+                prevX = args.P;
+            }
+            //std::cout << "Iter: " << i << " X: " << x << " f(x): " << f(x, z, K) << endl;
+            //std::cout << "T= " << args.T << endl;
+            return args.P;
         }
 
         EquilibriumProperties calculate_flash_TP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
@@ -213,6 +235,83 @@ namespace Thermodynamics
                     }
                     else
                         Told = props.T;
+                }
+            }
+
+            return props;
+        }
+
+        EquilibriumProperties calculate_flash_ZT(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        {
+            EquilibriumProperties props;
+            props.T = args.T;
+            props.P = args.P;
+            props.v = args.v;
+            props.x = VectorXReal(args.x);
+            props.y = VectorXReal(args.y);
+            props.z = VectorXReal(args.z);
+
+            props.phase = PhaseToString[PhaseState::LiquidVapor];
+
+            if (args.v == 0.0)
+            {
+                props.v = 0;
+                props.phase = PhaseToString[PhaseState::Liquid];
+
+                props.P = solveBubblePointForP(BubblePoint, args, sys, 1e-5, 20);
+                args.P = props.P;
+
+                Real denom = 0.0;
+                Real Pold = props.P;
+                for (int j = 0; j < 10; j++)
+                {
+                    args.P.val = props.P.val;
+                    props.KValues = KValues(args, sys);
+                    props.P = solveBubblePointForP(BubblePoint, args, sys, 1e-5, 20);
+
+                    for (size_t i = 0; i < args.z.size(); i++)
+                    {
+                        denom = 1.0 - props.v + props.v * props.KValues[i];
+                        args.x[i] = args.z[i] / (denom);
+                        args.y[i] = props.KValues[i] * args.z[i] / (denom);
+                    }
+
+                    if (abs(Pold - props.P) < 1e-4)
+                    {
+                        break;
+                    }
+                    else
+                        Pold = props.P;
+                }
+            }
+            if (args.v == 1.0)
+            {
+                props.v = 1;
+                props.phase = PhaseToString[PhaseState::Vapor];
+
+                props.P = solveBubblePointForP(DewPoint, args, sys, 1e-5, 20);
+                args.P = props.P;
+
+                Real denom = 0.0;
+                Real Pold = props.P;
+                for (int j = 0; j < 10; j++)
+                {
+                    args.P.val = props.P.val;
+                    props.KValues = KValues(args, sys);
+                    props.P = solveBubblePointForP(DewPoint, args, sys, 1e-5, 20);
+
+                    for (size_t i = 0; i < args.z.size(); i++)
+                    {
+                        denom = 1.0 - props.v + props.v * props.KValues[i];
+                        args.x[i] = args.z[i] / (denom);
+                        args.y[i] = props.KValues[i] * args.z[i] / (denom);
+                    }
+                    if (abs(Pold - props.P) < 1e-4)
+                    {
+                        break;
+                    }
+                    else
+                        Pold = props.P;
                 }
             }
 
