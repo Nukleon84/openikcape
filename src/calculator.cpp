@@ -61,7 +61,7 @@ namespace Thermodynamics
         {
             EquilibriumArguments args;
             args.v = vaporfraction;
-            args.T=323.15;
+            args.T=298.15;
             args.P = pressure;
             args.z = VectorXReal(this->system->NC);
             args.x = VectorXReal(this->system->NC);
@@ -97,7 +97,7 @@ namespace Thermodynamics
             EquilibriumArguments args;
             args.v = vaporfraction;
             args.T= temperature;
-            args.P = 1e5;
+            args.P = 0.5e5;
             args.z = VectorXReal(this->system->NC);
             args.x = VectorXReal(this->system->NC);
             args.y = VectorXReal(this->system->NC);

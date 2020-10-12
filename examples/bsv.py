@@ -18,7 +18,7 @@ mode=["Gamma&Gex", "IsobaricVLE", "IsothermalVLE"]
 comp1=st.sidebar.selectbox("Select the first substance", complist, index=0)
 comp2=st.sidebar.selectbox("Select the second substance", complist, index=2)
 T =st.sidebar.slider('Temperature [°C]', 0, 400, 100)
-P =st.sidebar.slider('Temperature Pressure [mbar]', 10, 5000, 1000)
+P =st.sidebar.slider('Pressure [mbar]', 10, 5000, 1000)
 
 steps =st.sidebar.slider('Number of Steps', 2, 30,10)
 
