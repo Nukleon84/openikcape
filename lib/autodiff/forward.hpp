@@ -30,4 +30,4 @@
 #pragma once
 
 // autodiff includes
-#include <lib/autodiff/forward/forward.hpp>
+#include <autodiff/forward/forward.hpp>

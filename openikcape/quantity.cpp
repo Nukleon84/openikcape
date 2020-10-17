@@ -3,8 +3,8 @@
 #include <stdexcept>
 #include <math.h>
 #include <map>
-#include "include/uom.h"
-#include "include/thermodynamics.h"
+#include "uom.h"
+#include "thermodynamics.h"
 using namespace std;
 
 namespace Thermodynamics

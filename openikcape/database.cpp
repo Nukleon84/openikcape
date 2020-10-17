@@ -11,10 +11,10 @@
 #include <sstream>
 #include <iterator>
 
-#include "include/thermodynamics.h"
-#include "include/unitsets.h"
+#include "thermodynamics.h"
+#include "unitsets.h"
 
-#include <lib/Eigen/Dense>
+#include <Eigen/Dense>
 
 using namespace std;
 using namespace Thermodynamics::Types;

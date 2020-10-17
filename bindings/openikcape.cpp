@@ -1,16 +1,13 @@
-#include "lib/pybind11/pybind11.h"
-
-#include "lib/pybind11/stl.h"
-
-
+#include "pybind11/pybind11.h"
+#include "pybind11/stl.h"
 
 #include <iostream>
 #include <math.h>
-#include "lib/autodiff/forward.hpp"
+#include "autodiff/forward.hpp"
 
-#include "include/thermodynamics.h"
-#include "include/purefunctions.h"
-#include "include/vleqfunctions.h"
+#include "thermodynamics.h"
+#include "purefunctions.h"
+#include "vleqfunctions.h"
 
 using namespace autodiff;
 using namespace std;

@@ -2,9 +2,9 @@
 #include <vector>
 #include <stdexcept>
 #include <math.h>
-#include "include/thermodynamics.h"
-#include "include/activityProperties.h"
-#include "include/vleqfunctions.h"
+#include "thermodynamics.h"
+#include "activityProperties.h"
+#include "vleqfunctions.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;

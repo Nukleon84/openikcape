@@ -6,12 +6,12 @@
 #include <math.h>
 #include <map>
 
-#include <lib/Eigen/Dense>
-#include <lib/autodiff/forward.hpp>
+#include <Eigen/Dense>
+#include <autodiff/forward.hpp>
 #include <autodiff/forward/eigen.hpp>
 
-#include "include/uom.h"
-#include "include/thermodynamics.h"
+#include "uom.h"
+#include "thermodynamics.h"
 
 using namespace std;
 

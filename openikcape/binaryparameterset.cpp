@@ -11,7 +11,7 @@
 #include <sstream>
 #include <iterator>
 
-#include "include/thermodynamics.h"
+#include "thermodynamics.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;

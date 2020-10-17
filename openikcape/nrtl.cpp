@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <math.h>
 #include <iostream>
-#include "include/thermodynamics.h"
+#include "thermodynamics.h"
 
-#include "include/activityProperties.h"
+#include "activityProperties.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;

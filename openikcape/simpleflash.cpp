@@ -3,9 +3,9 @@
 #include <stdexcept>
 #include <math.h>
 #include <iostream>
-#include "include/thermodynamics.h"
-#include "include/activityProperties.h"
-#include "include/vleqfunctions.h"
+#include "thermodynamics.h"
+#include "activityProperties.h"
+#include "vleqfunctions.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;
@@ -107,6 +107,20 @@ namespace Thermodynamics
             return args.P;
         }
 
+        void solveNewtonRaphson(Real f(EquilibriumArguments &, const Thermodynamics::Types::ThermodynamicSystem *), EquilibriumArguments &args, const Thermodynamics::Types::ThermodynamicSystem *sys, Real& vari, double tol, int maxiter)
+        {        
+            Real fval = 0.0;
+            double dfdx =0.0;
+            for (int i = 0; i < maxiter; i++)
+            {
+                fval = f(args, sys);
+                if (abs(fval) < tol)
+                    break;
+                dfdx = derivative(f, wrt(vari), at(args, sys));
+                vari.val = (vari.val - (fval.val / dfdx));                
+            }           
+        }
+
         EquilibriumProperties calculate_flash_TP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
         {
             EquilibriumProperties props;
@@ -116,8 +130,7 @@ namespace Thermodynamics
             props.x = VectorXReal(args.x);
             props.y = VectorXReal(args.y);
             props.z = VectorXReal(args.z);
-
-            props.KValues = WilsonKFactors(args, sys);
+            props.KValues = KValues(args, sys);
 
             args.v=0.0;
             auto rrAt0 = RachfordRice(args, sys);
@@ -137,30 +150,32 @@ namespace Thermodynamics
                 return props;
             }
             props.phase = PhaseToString[PhaseState::LiquidVapor];
-            props.v = solveRachfordRice(RachfordRice, args, sys, 1e-6, 20);
+
+            solveNewtonRaphson(RachfordRice, args, sys, args.v, 1e-6, 20);
 
             Real denom = 0.0;
-            Real vold = props.v;
+            Real vold = args.v;
             for (int j = 0; j < 30; j++)
             {
                 props.KValues = KValues(args, sys);
-                props.v = solveRachfordRice(RachfordRice, args, sys, 1e-6, 20);
-
+                solveNewtonRaphson(RachfordRice, args, sys, args.v, 1e-6, 20);
+           
                 for (auto i = 0; i < args.z.size(); i++)
                 {
-                    denom = 1.0 - props.v + props.v * props.KValues[i];
+                    denom = 1.0 - args.v + args.v * props.KValues[i];
                     args.x[i] = args.z[i] / (denom);
                     args.y[i] = props.KValues[i] * args.z[i] / (denom);
                 }
 
-                if (abs(vold - props.v) < 1e-6)
+                if (abs(vold - args.v) < 1e-6)
                 {
                     break;
                 }
                 else
-                    vold = props.v;
+                    vold = args.v;
             }
 
+            props.v=args.v;
             return props;
         }
 

@@ -11,9 +11,9 @@
 #include <sstream>
 #include <iterator>
 
-#include "include/thermodynamics.h"
-#include "include/purefunctions.h"
-#include "include/vleqfunctions.h"
+#include "thermodynamics.h"
+#include "purefunctions.h"
+#include "vleqfunctions.h"
 
 using namespace std;
 using namespace Thermodynamics::Types;

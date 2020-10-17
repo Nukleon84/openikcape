@@ -1,9 +1,9 @@
 #include <iostream>
 #include <math.h>
-#include "lib/autodiff/forward.hpp"
+#include "autodiff/forward.hpp"
 
-#include "include/thermodynamics.h"
-#include "include/vleqfunctions.h"
+#include "thermodynamics.h"
+#include "vleqfunctions.h"
 
 using namespace autodiff;
 using namespace std;

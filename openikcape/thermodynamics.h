@@ -6,11 +6,11 @@
 #include <math.h>
 #include <map>
 
-#include <lib/Eigen/Dense>
+#include <Eigen/Dense>
 
-#include "include/uom.h"
-#include "include/unitsets.h"
-#include "include/activityProperties.h"
+#include "uom.h"
+#include "unitsets.h"
+#include "activityProperties.h"
 using namespace std;
 
 namespace Thermodynamics
