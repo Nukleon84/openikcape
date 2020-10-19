@@ -1,6 +1,6 @@
 #include <iostream>
 #include <math.h>
-#include "autodiff/forward.hpp"
+//#include "autodiff/forward.hpp"
 
 #include "openikcape.h"
 
@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
     auto calculator = Thermodynamics::Types::Calculator(sys);
 
     double T = 353.15, p = 1.013e5, x1=0.5;
-    cout << "Called IKCFLASH exectuable with " << argc << " arguments" << endl;
+    cout << "You called the IKCFLASH executable with " << argc << " arguments" << endl;
     if ( argc == 4 ) 
 	{
 		T = stod( argv[1] );
@@ -29,17 +29,20 @@ int main(int argc, char *argv[])
     cout << "Vapor Fraction :" << result.v << endl;
     cout << "Temperature:" << result.T << endl;
     cout << "Pressure:" << result.P << endl;
+    
     cout << "z: ";
     for (auto i: result.z)
-    cout << i << ' ';
+        cout << i << ' ';
     cout << endl;
+    
     cout << "x: ";
     for (auto i: result.x)
-    cout << i << ' ';
+        cout << i << ' ';
     cout << endl;
+   
     cout << "y: ";
     for (auto i: result.y)
-    cout << i << ' ';
+        cout << i << ' ';
     cout << endl;
 
 }
