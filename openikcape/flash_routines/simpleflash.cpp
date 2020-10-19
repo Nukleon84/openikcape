@@ -107,18 +107,18 @@ namespace Thermodynamics
             return args.P;
         }
 
-        void solveNewtonRaphson(Real f(EquilibriumArguments &, const Thermodynamics::Types::ThermodynamicSystem *), EquilibriumArguments &args, const Thermodynamics::Types::ThermodynamicSystem *sys, Real& vari, double tol, int maxiter)
-        {        
+        void solveNewtonRaphson(Real f(EquilibriumArguments &, const Thermodynamics::Types::ThermodynamicSystem *), EquilibriumArguments &args, const Thermodynamics::Types::ThermodynamicSystem *sys, Real &vari, double tol, int maxiter)
+        {
             Real fval = 0.0;
-            double dfdx =0.0;
+            double dfdx = 0.0;
             for (int i = 0; i < maxiter; i++)
             {
                 fval = f(args, sys);
                 if (abs(fval) < tol)
                     break;
                 dfdx = derivative(f, wrt(vari), at(args, sys));
-                vari.val = (vari.val - (fval.val / dfdx));                
-            }           
+                vari.val = (vari.val - (fval.val / dfdx));
+            }
         }
 
         EquilibriumProperties calculate_flash_TP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
@@ -132,9 +132,9 @@ namespace Thermodynamics
             props.z = VectorXReal(args.z);
             props.KValues = KValues(args, sys);
 
-            args.v=0.0;
+            args.v = 0.0;
             auto rrAt0 = RachfordRice(args, sys);
-            args.v=1.0;
+            args.v = 1.0;
             auto rrAt1 = RachfordRice(args, sys);
 
             if (rrAt0 < 0 && rrAt1 < 0)
@@ -159,7 +159,7 @@ namespace Thermodynamics
             {
                 props.KValues = KValues(args, sys);
                 solveNewtonRaphson(RachfordRice, args, sys, args.v, 1e-6, 20);
-           
+
                 for (auto i = 0; i < args.z.size(); i++)
                 {
                     denom = 1.0 - args.v + args.v * props.KValues[i];
@@ -175,7 +175,10 @@ namespace Thermodynamics
                     vold = args.v;
             }
 
-            props.v=args.v;
+            props.x = args.x;
+            props.y = args.y;
+            props.v = args.v;
+            props.KValues = KValues(args, sys);
             return props;
         }
 
@@ -201,7 +204,7 @@ namespace Thermodynamics
 
                 Real denom = 0.0;
                 Real Told = props.T;
-                for (int j = 0; j <30; j++)
+                for (int j = 0; j < 30; j++)
                 {
                     args.T.val = props.T.val;
                     props.KValues = KValues(args, sys);
