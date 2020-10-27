@@ -13,7 +13,7 @@
 /out/
 /cmake-build-*/
 
-__pycache__
+__pycache__/
 
 ### CMake ###
 CMakeCache.txt
