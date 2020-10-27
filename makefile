@@ -9,3 +9,7 @@ app:
 exe:
 	g++ -std=c++17 -g -o ./bin/ikcflash -I ./openikcape -I ./lib ./openikcape/*.cpp ./openikcape/*/*.cpp   ./examples/cpp/ikcflash.cpp
 	cp data/prop.dat bin/prop.dat
+venv: 
+	python3 -m venv venv
+	/venv/bin/activate.bat
+	pip3 install -r requirements.txt

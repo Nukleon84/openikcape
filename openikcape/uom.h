@@ -49,12 +49,9 @@ namespace Thermodynamics
             {
             }
 
-            Unit operator*(       // passing lhs by value helps optimize chained a+b+c
-                Unit rhs); // otherwise, both parameters may be const references
-            Unit operator/(       // passing lhs by value helps optimize chained a+b+c
-                Unit rhs); // otherwise, both parameters may be const references
-            Unit operator^(       // passing lhs by value helps optimize chained a+b+c
-                double rhs); // otherwise, both parameters may be const references
+            Unit operator*(Unit rhs); 
+            Unit operator/(Unit rhs); 
+            Unit operator^(double rhs); 
 
             operator std::string() const ;
         };

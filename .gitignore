@@ -4,6 +4,7 @@
 # Build -----------------------------------------------------------------------
 
 ### Output and Cache Directories ###
+/venv/
 /External/
 /Debug/
 /Release/

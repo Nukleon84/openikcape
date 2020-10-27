@@ -27,7 +27,7 @@ tuple<double, double> kvalue(Substance component, double temp, double pres)
 
 int add(int i, int j)
 {    
-    return i + j * 2;
+    return i + j;
 }
 
 
