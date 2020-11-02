@@ -22,7 +22,7 @@ namespace Thermodynamics
             Real g = 0.0;
             for (auto i = 0; i < args.z.size(); i++)
             {
-                g += args.z[i] * (K[i] - 1) / (1.0 - args.v + args.v * K[i]);
+                g += args.z[i] * (K[i] - 1) / (1.0 - args.vf + args.vf * K[i]);
             }
             return g;
         }
@@ -51,18 +51,18 @@ namespace Thermodynamics
 
         Real solveRachfordRice(Real f(EquilibriumArguments &, const ThermodynamicSystem *), EquilibriumArguments &args, const Thermodynamics::Types::ThermodynamicSystem *sys, double tol, int maxiter)
         {
-            Real prevX = args.v;
+            Real prevX = args.vf;
             for (int i = 0; i < maxiter; i++)
             {
                 if (abs(f(args, sys)) < tol)
                     break;
-                double dfdx = derivative(f, wrt(args.v), at(args, sys));
-                args.v = prevX - (f(args, sys) / dfdx);
-                prevX = args.v;
+                double dfdx = derivative(f, wrt(args.vf), at(args, sys));
+                args.vf = prevX - (f(args, sys) / dfdx);
+                prevX = args.vf;
             }
             //std::cout << "Iter: " << i << " X: " << x << " f(x): " << f(x, z, K) << endl;
             // std::cout << "VF= " << x << endl;
-            return args.v;
+            return args.vf;
         }
 
         Real solveBubblePointForT(Real f(EquilibriumArguments &, const ThermodynamicSystem *), EquilibriumArguments &args, const Thermodynamics::Types::ThermodynamicSystem *sys, double tol, int maxiter)
@@ -126,58 +126,58 @@ namespace Thermodynamics
             EquilibriumProperties props;
             props.T = args.T;
             props.P = args.P;
-            props.v = 0.5;
+            props.vf = 0.5;
             props.x = VectorXReal(args.x);
             props.y = VectorXReal(args.y);
             props.z = VectorXReal(args.z);
             props.KValues = KValues(args, sys);
 
-            args.v = 0.0;
+            args.vf = 0.0;
             auto rrAt0 = RachfordRice(args, sys);
-            args.v = 1.0;
+            args.vf = 1.0;
             auto rrAt1 = RachfordRice(args, sys);
 
             if (rrAt0 < 0 && rrAt1 < 0)
             {
-                props.v = 0;
+                props.vf = 0;
                 props.phase = PhaseToString[PhaseState::Liquid];
                 return props;
             }
             if (rrAt0 > 1 && rrAt1 > 1)
             {
-                props.v = 1;
+                props.vf = 1;
                 props.phase = PhaseToString[PhaseState::Vapor];
                 return props;
             }
             props.phase = PhaseToString[PhaseState::LiquidVapor];
 
-            solveNewtonRaphson(RachfordRice, args, sys, args.v, 1e-6, 20);
+            solveNewtonRaphson(RachfordRice, args, sys, args.vf, 1e-6, 20);
 
             Real denom = 0.0;
-            Real vold = args.v;
+            Real vold = args.vf;
             for (int j = 0; j < 30; j++)
             {
                 props.KValues = KValues(args, sys);
-                solveNewtonRaphson(RachfordRice, args, sys, args.v, 1e-6, 20);
+                solveNewtonRaphson(RachfordRice, args, sys, args.vf, 1e-6, 20);
 
                 for (auto i = 0; i < args.z.size(); i++)
                 {
-                    denom = 1.0 - args.v + args.v * props.KValues[i];
+                    denom = 1.0 - args.vf + args.vf * props.KValues[i];
                     args.x[i] = args.z[i] / (denom);
                     args.y[i] = props.KValues[i] * args.z[i] / (denom);
                 }
 
-                if (abs(vold - args.v) < 1e-6)
+                if (abs(vold - args.vf) < 1e-6)
                 {
                     break;
                 }
                 else
-                    vold = args.v;
+                    vold = args.vf;
             }
 
             props.x = args.x;
             props.y = args.y;
-            props.v = args.v;
+            props.vf = args.vf;
             props.KValues = KValues(args, sys);
             return props;
         }
@@ -187,16 +187,16 @@ namespace Thermodynamics
             EquilibriumProperties props;
             props.T = args.T;
             props.P = args.P;
-            props.v = args.v;
+            props.vf = args.vf;
             props.x = VectorXReal(args.x);
             props.y = VectorXReal(args.y);
             props.z = VectorXReal(args.z);
 
             props.phase = PhaseToString[PhaseState::LiquidVapor];
 
-            if (args.v == 0.0)
+            if (args.vf == 0.0)
             {
-                props.v = 0;
+                props.vf = 0;
                 props.phase = PhaseToString[PhaseState::Liquid];
 
                 props.T = solveBubblePointForT(BubblePoint, args, sys, 1e-6, 20);
@@ -212,7 +212,7 @@ namespace Thermodynamics
 
                     for (auto i = 0; i < args.z.size(); i++)
                     {
-                        denom = 1.0 - props.v + props.v * props.KValues[i];
+                        denom = 1.0 - props.vf + props.vf * props.KValues[i];
                         args.x[i] = args.z[i] / (denom);
                         args.y[i] = props.KValues[i] * args.z[i] / (denom);
                     }
@@ -225,9 +225,9 @@ namespace Thermodynamics
                         Told = props.T;
                 }
             }
-            if (args.v == 1.0)
+            if (args.vf == 1.0)
             {
-                props.v = 1;
+                props.vf = 1;
                 props.phase = PhaseToString[PhaseState::Vapor];
 
                 props.T = solveBubblePointForT(DewPoint, args, sys, 1e-6, 20);
@@ -243,7 +243,7 @@ namespace Thermodynamics
 
                     for (auto i = 0; i < args.z.size(); i++)
                     {
-                        denom = 1.0 - props.v + props.v * props.KValues[i];
+                        denom = 1.0 - props.vf + props.vf * props.KValues[i];
                         args.x[i] = args.z[i] / (denom);
                         args.y[i] = props.KValues[i] * args.z[i] / (denom);
                     }
@@ -264,16 +264,16 @@ namespace Thermodynamics
             EquilibriumProperties props;
             props.T = args.T;
             props.P = args.P;
-            props.v = args.v;
+            props.vf = args.vf;
             props.x = VectorXReal(args.x);
             props.y = VectorXReal(args.y);
             props.z = VectorXReal(args.z);
 
             props.phase = PhaseToString[PhaseState::LiquidVapor];
 
-            if (args.v == 0.0)
+            if (args.vf == 0.0)
             {
-                props.v = 0;
+                props.vf = 0;
                 props.phase = PhaseToString[PhaseState::Liquid];
 
                 props.P = solveBubblePointForP(BubblePoint, args, sys, 1e-6, 50);
@@ -289,7 +289,7 @@ namespace Thermodynamics
 
                     for (auto i = 0; i < args.z.size(); i++)
                     {
-                        denom = 1.0 - props.v + props.v * props.KValues[i];
+                        denom = 1.0 - props.vf + props.vf * props.KValues[i];
                         args.x[i] = args.z[i] / (denom);
                         args.y[i] = props.KValues[i] * args.z[i] / (denom);
                     }
@@ -302,9 +302,9 @@ namespace Thermodynamics
                         Pold = props.P;
                 }
             }
-            if (args.v == 1.0)
+            if (args.vf == 1.0)
             {
-                props.v = 1;
+                props.vf = 1;
                 props.phase = PhaseToString[PhaseState::Vapor];
 
                 props.P = solveBubblePointForP(DewPoint, args, sys, 1e-5, 50);
@@ -320,7 +320,7 @@ namespace Thermodynamics
 
                     for (auto i = 0; i < args.z.size(); i++)
                     {
-                        denom = 1.0 - props.v + props.v * props.KValues[i];
+                        denom = 1.0 - props.vf + props.vf * props.KValues[i];
                         args.x[i] = args.z[i] / (denom);
                         args.y[i] = props.KValues[i] * args.z[i] / (denom);
                     }

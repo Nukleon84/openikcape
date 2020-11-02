@@ -307,6 +307,7 @@ namespace Thermodynamics
             EquilibriumPropertiesExt calc_flash_tp(double temperature, double pressure, vector<double> z);      
             EquilibriumPropertiesExt calc_flash_zp(double vaporfraction, double pressure, vector<double> z);      
             EquilibriumPropertiesExt calc_flash_zt(double vaporfraction, double pressure, vector<double> z);      
+            Equilibrium3PropertiesExt calc_flash3_tp(double temperature, double pressure, vector<double> z);
 
             ActivityPropertiesExt get_vleq_gamma(double temperature, double pressure, vector<double> x);
             double get_pure_property(string property, int componentIndex, double temperature);

@@ -24,6 +24,10 @@ namespace Thermodynamics
         EquilibriumProperties calculate_flash_TP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
         EquilibriumProperties calculate_flash_ZP(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
          EquilibriumProperties calculate_flash_ZT(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+
+         
+        Equilibrium3Properties calculate_flash3_TP(Equilibrium3Arguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+
         VectorXReal WilsonKFactors(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
   
 

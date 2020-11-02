@@ -23,108 +23,32 @@ namespace Thermodynamics
     namespace Types
     {
 
+        Equilibrium3PropertiesExt Calculator::calc_flash3_tp(double temperature, double pressure, vector<double> z)
+        {
+            Equilibrium3Arguments args(temperature, pressure, 0.5, z);         
+            auto props = Thermodynamics::VLEQFunctions::calculate_flash3_TP(args, this->system);         
+            return export_properties3(props);
+        }
+
         EquilibriumPropertiesExt Calculator::calc_flash_tp(double temperature, double pressure, vector<double> z)
         {
-            EquilibriumArguments args;
-            args.T = temperature;
-            args.P = pressure;
-            args.z = VectorXReal(this->system->NC);
-            args.x = VectorXReal(this->system->NC);
-            args.y = VectorXReal(this->system->NC);
-            for (size_t i = 0; i < z.size(); i++)
-            {
-                args.z[i] = z[i];
-                args.y[i] = z[i];
-                args.x[i] = z[i];
-            }
-
-            auto props = Thermodynamics::VLEQFunctions::calculate_flash_TP(args, this->system);
-
-            EquilibriumPropertiesExt results;
-            results.T = props.T.val;
-            results.P = props.P.val;
-            results.v = props.v.val;
-            results.z = std::vector<double>(this->system->NC);
-            results.x = std::vector<double>(this->system->NC);
-            results.y = std::vector<double>(this->system->NC);
-            results.phase = props.phase;
-            for (size_t i = 0; i < z.size(); i++)
-            {
-                results.z[i] = props.z[i].val;
-                results.x[i] = props.x[i].val;
-                results.y[i] = props.y[i].val;
-            }
-            return results;
+            EquilibriumArguments args(temperature, pressure, 0.5, z);           
+            auto props = Thermodynamics::VLEQFunctions::calculate_flash_TP(args, this->system);           
+            return export_properties(props);
         }
 
         EquilibriumPropertiesExt Calculator::calc_flash_zp(double vaporfraction, double pressure, vector<double> z)
         {
-            EquilibriumArguments args;
-            args.v = vaporfraction;
-            args.T=298.15;
-            args.P = pressure;
-            args.z = VectorXReal(this->system->NC);
-            args.x = VectorXReal(this->system->NC);
-            args.y = VectorXReal(this->system->NC);
-            for (size_t i = 0; i < z.size(); i++)
-            {
-                args.z[i] = z[i];
-                args.y[i] = z[i];
-                args.x[i] = z[i];
-            }
-
+            EquilibriumArguments args(298.15, pressure, vaporfraction, z);      
             auto props = Thermodynamics::VLEQFunctions::calculate_flash_ZP(args, this->system);
-
-            EquilibriumPropertiesExt results;
-            results.T = props.T.val;
-            results.P = props.P.val;
-            results.v = props.v.val;
-            results.z = std::vector<double>(this->system->NC);
-            results.x = std::vector<double>(this->system->NC);
-            results.y = std::vector<double>(this->system->NC);
-            results.phase = props.phase;
-            for (size_t i = 0; i < z.size(); i++)
-            {
-                results.z[i] = props.z[i].val;
-                results.x[i] = props.x[i].val;
-                results.y[i] = props.y[i].val;
-            }
-            return results;
+            return export_properties(props);
         }
 
          EquilibriumPropertiesExt Calculator::calc_flash_zt(double vaporfraction, double temperature, vector<double> z)
         {
-            EquilibriumArguments args;
-            args.v = vaporfraction;
-            args.T= temperature;
-            args.P = 0.5e5;
-            args.z = VectorXReal(this->system->NC);
-            args.x = VectorXReal(this->system->NC);
-            args.y = VectorXReal(this->system->NC);
-            for (size_t i = 0; i < z.size(); i++)
-            {
-                args.z[i] = z[i];
-                args.y[i] = z[i];
-                args.x[i] = z[i];
-            }
-
+            EquilibriumArguments args(temperature, 1.0e5, vaporfraction, z);
             auto props = Thermodynamics::VLEQFunctions::calculate_flash_ZT(args, this->system);
-
-            EquilibriumPropertiesExt results;
-            results.T = props.T.val;
-            results.P = props.P.val;
-            results.v = props.v.val;
-            results.z = std::vector<double>(this->system->NC);
-            results.x = std::vector<double>(this->system->NC);
-            results.y = std::vector<double>(this->system->NC);
-            results.phase = props.phase;
-            for (size_t i = 0; i < z.size(); i++)
-            {
-                results.z[i] = props.z[i].val;
-                results.x[i] = props.x[i].val;
-                results.y[i] = props.y[i].val;
-            }
-            return results;
+            return export_properties(props);
         }
 
         ActivityPropertiesExt Calculator::get_vleq_gamma(double temperature, double pressure, vector<double> x)

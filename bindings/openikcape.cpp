@@ -70,10 +70,23 @@ PYBIND11_MODULE(openikcape, m)
         .def(pybind11::init<>())
         .def_readwrite("T", &EquilibriumPropertiesExt::T)
         .def_readwrite("P", &EquilibriumPropertiesExt::P)
-        .def_readwrite("v", &EquilibriumPropertiesExt::v)
+        .def_readwrite("vf", &EquilibriumPropertiesExt::vf)
         .def_readwrite("x", &EquilibriumPropertiesExt::x)
         .def_readwrite("y", &EquilibriumPropertiesExt::y)
         .def_readwrite("z", &EquilibriumPropertiesExt::z);
+    
+    pybind11::class_<Equilibrium3PropertiesExt>(m, "Equilibrium3Properties")
+        .def(pybind11::init<>())
+        .def_readwrite("T", &Equilibrium3PropertiesExt::T)
+        .def_readwrite("P", &Equilibrium3PropertiesExt::P)
+        .def_readwrite("vf", &Equilibrium3PropertiesExt::vf)
+        .def_readwrite("l1f", &Equilibrium3PropertiesExt::l1f)
+        .def_readwrite("l2f", &Equilibrium3PropertiesExt::l2f)
+        .def_readwrite("x1", &Equilibrium3PropertiesExt::x1)
+        .def_readwrite("x2", &Equilibrium3PropertiesExt::x2)
+        .def_readwrite("y", &Equilibrium3PropertiesExt::y)
+        .def_readwrite("z", &Equilibrium3PropertiesExt::z);
+
 
 
     pybind11::class_<Database>(m, "Database")   
