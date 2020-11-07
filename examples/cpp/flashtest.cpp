@@ -20,25 +20,25 @@ int main()
     auto result = calculator.calc_flash_tp(T, p, {0.5, 0.5});
 
     cout << "Phase State    :" << result.phase << endl;
-    cout << "Vapor Fraction :" << result.v << endl;
+    cout << "Vapor Fraction :" << result.vf << endl;
     cout << "Temperature:" << result.T << endl;
 
     auto result2 = calculator.calc_flash_zp(0.0, p, {0.5, 0.5});
 
     cout << "Phase State    :" << result2.phase << endl;
-    cout << "Vapor Fraction :" << result2.v << endl;
+    cout << "Vapor Fraction :" << result2.vf << endl;
     cout << "Temperature:" << result2.T << endl;
 
     result2 = calculator.calc_flash_zp(1.0, p, {0.5, 0.5});
 
     cout << "Phase State    :" << result2.phase << endl;
-    cout << "Vapor Fraction :" << result2.v << endl;
+    cout << "Vapor Fraction :" << result2.vf << endl;
     cout << "Temperature:" << result2.T << endl;
 
     result2 = calculator.calc_flash_zt(0.0,T, {0.5, 0.5});
 
     cout << "Phase State    :" << result2.phase << endl;
-    cout << "Vapor Fraction :" << result2.v << endl;
+    cout << "Vapor Fraction :" << result2.vf << endl;
     cout << "Temperature:" << result2.T << endl;
     cout << "Pressure:" << result2.P << endl;
 

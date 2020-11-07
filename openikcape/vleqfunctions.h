@@ -15,9 +15,9 @@ namespace Thermodynamics
     namespace VLEQFunctions
     {
 
-        ActivityProperties calculateNRTL(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
-        ActivityProperties ActivityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
-        FugacityProperties FugacityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        ActivityProperties calculateNRTL(Real T, Real p, VectorXReal x, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        ActivityProperties ActivityCoefficients(Real T, Real p, VectorXReal x, const Thermodynamics::Types::ThermodynamicSystem *sys);
+        FugacityProperties FugacityCoefficients(Real T, Real p, VectorXReal y, const Thermodynamics::Types::ThermodynamicSystem *sys);
      
         VectorXReal KValues(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys);
      

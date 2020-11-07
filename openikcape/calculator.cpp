@@ -66,7 +66,7 @@ namespace Thermodynamics
                 args.x[i] = x[i];
             }
 
-            auto props = Thermodynamics::VLEQFunctions::ActivityCoefficients(args, (this->system));
+            auto props = Thermodynamics::VLEQFunctions::ActivityCoefficients(args.T, args.P, args.x, (this->system));
 
             ActivityPropertiesExt results;
             results.Gex = props.Gex.val;

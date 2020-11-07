@@ -228,6 +228,7 @@ namespace Thermodynamics
             std::map<MolecularProperties, Quantity> constants;
             std::map<PureProperties, PureFunction> functions;
 
+            double phaseL1split=0.5;
             bool isInert = false;
         };
 

@@ -27,6 +27,8 @@ namespace Thermodynamics
             result.T = props.T.val;
             result.P = props.P.val;
             result.vf = props.vf.val;
+            result.l1f = props.l1f.val;
+            result.l2f = props.l2f.val;
             result.z = std::vector<double>(NC);
             result.x1 = std::vector<double>(NC);
             result.x2 = std::vector<double>(NC);

@@ -13,13 +13,13 @@ namespace Thermodynamics
 {
     namespace VLEQFunctions
     {
-        ActivityProperties ActivityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        ActivityProperties ActivityCoefficients(Real T, Real p, VectorXReal x,  const Thermodynamics::Types::ThermodynamicSystem *sys)
         {
 
             switch (sys->activityMethod)
             {
             case ActivityMethod::NRTL:
-                return calculateNRTL(args, sys);
+                return calculateNRTL(T,p,x, sys);
                 break;
 
             default:
@@ -29,7 +29,7 @@ namespace Thermodynamics
             return ActivityProperties();
         }
 
-        FugacityProperties FugacityCoefficients(EquilibriumArguments args, const Thermodynamics::Types::ThermodynamicSystem *sys)
+        FugacityProperties FugacityCoefficients(Real T, Real p, VectorXReal y,  const Thermodynamics::Types::ThermodynamicSystem *sys)
         {
             switch (sys->fugacityMethod)
             {
@@ -78,8 +78,8 @@ namespace Thermodynamics
 
             if (sys->approach == EquilibriumApproach::GammaPhi)
             {
-                lprops = ActivityCoefficients(args, sys);
-                vprops = FugacityCoefficients(args, sys);
+                lprops = ActivityCoefficients(args.T, args.P, args.x, sys);
+                vprops = FugacityCoefficients(args.T, args.P, args.y, sys);
                 for (int i = 0; i < sys->NC; i++)
                 {
                     auto vp = PureFunctions::get_pure_property(PureProperties::VaporPressure, i, args.T, sys);
