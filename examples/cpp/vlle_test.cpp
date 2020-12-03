@@ -14,7 +14,7 @@ int main()
     auto sys = Thermodynamics::Types::ThermodynamicSystem("Test", db, {"Aniline", "Water"});
     auto calculator = Thermodynamics::Types::Calculator(sys);
 
-    double T = 353.15, p = 1.013e5;
+    double T = 303.15, p = 1.013e5;
     int colwidth = 10;
 
     sys.substances[0].phaseL1split=0.1;
@@ -29,6 +29,11 @@ int main()
     cout << "Vapor Fraction : " << result.vf << endl;
     cout << "L1    Fraction : " << result.l1f << endl;
     cout << "L2    Fraction : " << result.l2f << endl;
+
+    cout << "Components     : ";
+    for (auto i: sys.get_component_list())
+        cout << i.identifier << ' ';
+    cout << endl;
 
     cout << "z              : ";
     for (auto i: result.z)
